@@ -2,10 +2,12 @@ import { createBrowserRouter } from "react-router";
 import HomePage from "../pages/HomePage.tsx";
 import SignUpPage from "../pages/auth/signup/SignUpPage.tsx";
 import SignInPage from "../pages/auth/signin/SignInPage.tsx";
+import MainLayout from "../layouts/MainLayout.tsx";
 
 const router = createBrowserRouter([
     {
         path: "/",
+        element: <MainLayout/>,
         children: [
             { index: true, element: <HomePage/>},
             { path: "auth", children: [
