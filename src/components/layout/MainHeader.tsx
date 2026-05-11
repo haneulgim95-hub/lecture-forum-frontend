@@ -38,18 +38,6 @@ const NavGroup = styled.nav`
     gap: 16px;
 `;
 
-const IconButton = styled.button`
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    padding: 8px;
-    border-radius: 50%;
-    color: ${props => props.theme.colors.text.default};
-    transition: all 0.5s;
-    &:hover {
-        background-color: ${props => props.theme.colors.background.default};
-    }
-`;
 
 
 function MainHeader() {
@@ -61,11 +49,11 @@ function MainHeader() {
                     <span>토론대난투</span>
                 </Logo>
                 <NavGroup>
-                    <IconButton>
+                    <Button color={"primary"} variant={"icon"} onClick={() => console.log("테마변경")}>
                         <IoMoon size={20}/>
-                    </IconButton>
-                    <Button color={"primary"} variant={"text"}>로그인</Button>
-                    <Button color={"primary"} variant={"contained"}>회원가입</Button>
+                    </Button>
+                    <Button color={"primary"} variant={"text"} as={Link} to={"/auth/signin"}>로그인</Button>
+                    <Button color={"primary"} variant={"contained"} as={Link} to={"/auth/signup"}>회원가입</Button>
                 </NavGroup>
             </HeaderInner>
         </HeaderContainer>
