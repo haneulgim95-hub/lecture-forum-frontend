@@ -8,7 +8,7 @@ const HeaderContainer = styled.header`
     top: 0;
     z-index: 50;
     background-color: ${props => props.theme.colors.background.paper};
-    border: 1px solid ${props => props.theme.colors.divider};
+    border-bottom: 1px solid ${props => props.theme.colors.divider};
     width: 100%;
 `;
 
