@@ -22,7 +22,7 @@ function MainLayout() {
     return (
         <LayoutWrapper>
             <MainHeader />
-            // 메인부분이 화면의 전체가로길이를 차지하면 어색하다 (ex네이버 홈 참고)
+            {/*// 메인부분이 화면의 전체가로길이를 차지하면 어색하다 (ex네이버 홈 참고)*/}
             <MainContainer>
                 <Outlet />
             </MainContainer>
