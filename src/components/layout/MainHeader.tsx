@@ -1,7 +1,9 @@
 import styled from "styled-components";
-import { IoChatbubbles, IoMoon } from "react-icons/io5";
+import { IoChatbubbles, IoMoon, IoSunny } from "react-icons/io5";
 import { Link } from "react-router";
 import Button from "../common/button/Button.tsx";
+import { ThemeContext } from "../../contexts/theme/ThemeContext.tsx";
+import { useContext } from "react";
 
 const HeaderContainer = styled.header`
     height: 64px;
@@ -39,6 +41,8 @@ const NavGroup = styled.nav`
 `;
 
 function MainHeader() {
+    const {theme, onChangeTheme} = useContext(ThemeContext);
+
     return (
         <HeaderContainer>
             <HeaderInner>
@@ -47,8 +51,8 @@ function MainHeader() {
                     <span>토론대난투</span>
                 </Logo>
                 <NavGroup>
-                    <Button color={"primary"} variant={"icon"} onClick={() => {console.log("클릭")}}>
-                        <IoMoon size={20} />
+                    <Button color={"primary"} variant={"icon"} onClick={onChangeTheme}>
+                        {theme === "light" ? <IoSunny size={20}/> : <IoMoon size={20} />}
                     </Button>
                     <Button color={"primary"} variant={"text"} as={Link} to={"/auth/signin"}>로그인</Button>
                     <Button color={"primary"} variant={"contained"} as={Link} to={"/auth/signup"}>회원가입</Button>
