@@ -54,21 +54,27 @@ function SignUpPage() {
             // fetch(주소, 옵션); => 주소는 필수값, 옵션은 선택값
             // 옵션 객체 { method, header, body}
             const response = await fetch("http://localhost:8000/user/create", {
-                // 백엔드가 성공으로 응답하면 response에 담기고. 실패하면 catch로 간다.
+                // 백엔드의 응답이 response에 담긴다.
                 method: "POST",
                 headers: {
                     "Content-Type": "application/json",
                 },
-                body: JSON.stringify(submitData),       // 객체를 그래도 보낼 수 없고, JSON.stringify()를 통해 JSON형식의 string으로 변환
+                body: JSON.stringify(submitData), // 객체를 그래도 보낼 수 없고, JSON.stringify()를 통해 JSON형식의 string으로 변환
+                // submitData가 자바스크립트 객체라서,
+                // HTTP body에 넣어 보내기 위해 JSON 문자열로 변환하는 과정이야.
+                // JSON.stringify()  : 객체 → JSON 문자열
             });
 
             // response도 http 메세지 내용이 기록되기 때문에 string을 JSON으로 파싱해야 함
+            // response.json() : JSON 문자열 → 객체
+            // response = { ok: boolean, message: string }
+            // response.json()을 하게 되면 백엔드에서 응답한 내용인 response.message를 JSON으로 파싱
             const result = await response.json();
 
             // 그런데, 백엔드에서 500번대이든 400번대이든 회원가입 실패메세지를 돌려줘도, 프론트 엔드 입장에서는 응답이 왔으니 성공했다고 본다.
             // 우리의 논리를 통해, "우리가 생각하는" 성공인지를 판별
             // response.ok 프로퍼티 안에 response 상태 코드가 200번대라면 true, 아니라면 false
-            if (!result.ok) {
+            if (!response.ok) {
                 // 우리는 result.message가 있을것을 알고 있지만, 타입스크립트는 모르니깐, 혹시모를 상황에 대비한다. (논리합을통해서)
                 throw new Error(result.message || "회원가입 중 오류가 발생했습니다.");
             }
@@ -77,23 +83,34 @@ function SignUpPage() {
             alert("회원가입이 완료되었습니다. 로그인을 진행해주세요. ");
             navigate("/auth/signin");
         } catch (error) {
+            console.log(error);
+
             if (error instanceof Error) {
                 const errorMessage = error.message;
 
                 if (errorMessage === "이미 사용 중인 아이디입니다.") {
                     setError("username", { message: errorMessage });
-                } else if (errorMessage === "이미 가입된 이메일입니다.") {
-                    setError("email", {message: errorMessage });
-                } else if (errorMessage === "이미 사용 중인 닉네임입니다.") {
-                    setError("nickname", {message: errorMessage });
-                } else {
-                    setError("root", {message: errorMessage});
+                    return;
                 }
-            }
-            console.log(error);
 
-            // 백엔드에게 전송해서 실패 : 진짜 통신이 안될때.
-            setError("root", {message: "회원가입에 실패했습니다. 다시 시도해주세요."});
+                if (errorMessage === "이미 가입된 이메일입니다.") {
+                    setError("email", { message: errorMessage });
+                    return;
+                }
+
+                if (errorMessage === "이미 사용 중인 닉네임입니다.") {
+                    setError("nickname", { message: errorMessage });
+                    return;
+                }
+
+                setError("root", { message: errorMessage });
+                return;
+            }
+
+            // 진짜 예상 못한 에러
+            setError("root", {
+                message: "회원가입에 실패했습니다. 다시 시도해주세요.",
+            });
         }
     };
 
@@ -263,7 +280,7 @@ const Input = styled.input<{ $hasError: boolean }>`
     width: 100%;
     padding: 12px 16px;
     background-color: ${props => props.theme.colors.background.default};
-    border: 1px solid ${props => (props.$hasError ? props.theme.colors.error : props.theme.colors.divider)}
+    border: 1px solid ${props => (props.$hasError ? props.theme.colors.error : props.theme.colors.divider)};
     border-radius: 8px;
     font-size: 15px;
     color: ${props => props.theme.colors.text.default};
