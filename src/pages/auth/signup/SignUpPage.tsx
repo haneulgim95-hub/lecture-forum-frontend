@@ -5,6 +5,8 @@ import styled from "styled-components";
 import { Gender } from "../../../types/user.type.ts";
 import Button from "../../../components/common/button/Button.tsx";
 import { useNavigate } from "react-router";
+import axiosInstance from "../../../api/axiosInstance.ts";
+import axios from "axios";
 
 function SignUpPage() {
     const navigate = useNavigate();
@@ -38,42 +40,19 @@ function SignUpPage() {
         try {
             const { passwordConfirm, ...submitData } = data;
 
-            const response = await fetch("http://localhost:8000/user/create", {
-                method: "POST",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify(submitData),
-            });
-            // response = {"ok" : boolean, "message": string}
-            const result = await response.json();
-
-            if (!response.ok) {
-                throw new Error(result.message || "회원가입 중 오류가 발생하였습니다.");
-            }
+            await axiosInstance.post("/user/create", submitData);
 
             alert("회원가입이 완료되었습니다. 로그인을 진행해주세요.");
             navigate("/auth/signin");
         } catch (error) {
-            if (error instanceof Error) {
-                const errorMessage = error.message;
-                if (errorMessage === "이미 사용 중인 아이디입니다.") {
-                    setError("username", { message: errorMessage });
-                    return;
-                }
-                if (errorMessage === "이미 가입된 이메일입니다.") {
-                    setError("email", { message: errorMessage });
-                    return;
-                }
-                if (errorMessage === "이미 사용 중인 닉네임입니다.") {
-                    setError("nickname", { message: errorMessage });
-                    return;
-                }
-                setError("root", { message: errorMessage });
-                return;
+            let errorMessage = "회원가입 중 오류가 발생했습니다.";
+            if (axios.isAxiosError(error)) {
+                errorMessage = error.response?.data?.message || errorMessage;
+            } else if (error instanceof Error) {
+                errorMessage = error.message;
             }
-            console.log(error);
 
-            // 진짜 예상 못한 에러
-            setError("root", { message: "회원가입에 실패했습니다. 다시 시도해주세요." });
+            setError("root", { message: errorMessage });
         }
     };
 
@@ -174,15 +153,18 @@ function SignUpPage() {
                         </Select>
                         {errors.gender && <ErrorMessage>{errors.gender.message}</ErrorMessage>}
                     </InputGroup>
-                    <Button
-                        type={"submit"}
-                        fullWidth={true}
-                        color={"primary"}
-                        variant={"contained"}
-                        disabled={isSubmitting}>
-                        회원가입
-                    </Button>
                 </FormBox>
+
+                {errors.root && <RootErrorMessage>{errors.root.message}</RootErrorMessage>}
+
+                <Button
+                    type={"submit"}
+                    fullWidth={true}
+                    color={"primary"}
+                    variant={"contained"}
+                    disabled={isSubmitting}>
+                    회원가입
+                </Button>
             </FormCard>
         </AuthContainer>
     );
@@ -243,7 +225,7 @@ const Input = styled.input<{ $hasError: boolean }>`
     width: 100%;
     padding: 12px 16px;
     background-color: ${props => props.theme.colors.background.default};
-    border: 1px solid ${props => (props.$hasError ? props.theme.colors.error : props.theme.colors.divider)}
+    border: 1px solid ${props => (props.$hasError ? props.theme.colors.error : props.theme.colors.divider)};
     border-radius: 8px;
     font-size: 15px;
     color: ${props => props.theme.colors.text.default};
@@ -283,4 +265,12 @@ const ErrorMessage = styled.span`
     font-size: 13px;
     color: ${props => props.theme.colors.error};
     font-weight: 500;
+`;
+
+const RootErrorMessage = styled.p`
+    font-size: 14px;
+    text-align: center;
+    color: ${props => props.theme.colors.error};
+    font-weight: 500;
+    margin-bottom: 50px;
 `;
