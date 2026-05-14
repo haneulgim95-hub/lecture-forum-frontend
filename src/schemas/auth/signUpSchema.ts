@@ -1,7 +1,7 @@
 // 검증에 사용할 명세를 만드는 작업.
 
 import { z } from "zod";
-import { Gender } from "../../types/userType.ts";
+import { Gender } from "../../types/user.type.ts";
 
 const phoneRegex = /^01[016789]-?\d{3,4}-?\d{4}$/;
 
