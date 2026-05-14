@@ -5,6 +5,8 @@ import styled from "styled-components";
 import { Gender } from "../../../types/user.type.ts";
 import Button from "../../../components/common/button/Button.tsx";
 import { useNavigate } from "react-router";
+import axiosInstance from "../../../api/axiosInstance.ts";
+import * as axios from "axios";
 
 function SignUpPage() {
     const navigate = useNavigate();
@@ -45,72 +47,42 @@ function SignUpPage() {
     // errors는 각 항목에 대한 에러만 관리하는게 아니라 대표 errors 항목인 "root"라는 항목도 있음
 
     const onSubmit = async (data: SignUpInputType) => {
+        // fetch()메소드는 JavaScript 표준 라이브러리에 포함되어 있는 기능
+        // 사용을 하고 데이터를 받아올 때마다 JSON으로 바꿔줄 필요가 있음
+        // 이게 붏편해서 만들어진 라이브러리가 axios
+        // pnpm install axios
         try {
             // 전송에 대한 내용을 기재하면 되는데, 그대로 데이터를 전달할 것인가?
             // 프론트엔드에서'만' 필요한 passwordConfirm 항목이 추가되었음. 얘 빼고 전송.
             const { passwordConfirm, ...submitData } = data;
 
-            // submitData를 백엔드에게 전송 => fetch를 해준다? => 비동기함수네 => async-await => try-catch
-            // fetch(주소, 옵션); => 주소는 필수값, 옵션은 선택값
-            // 옵션 객체 { method, header, body}
-            const response = await fetch("http://localhost:8000/user/create", {
-                // 백엔드의 응답이 response에 담긴다.
-                method: "POST",
-                headers: {
-                    "Content-Type": "application/json",
-                },
-                body: JSON.stringify(submitData), // 객체를 그래도 보낼 수 없고, JSON.stringify()를 통해 JSON형식의 string으로 변환
-                // submitData가 자바스크립트 객체라서,
-                // HTTP body에 넣어 보내기 위해 JSON 문자열로 변환하는 과정이야.
-                // JSON.stringify()  : 객체 → JSON 문자열
-            });
+            // 200번대일때만 아래로 진행하고, 그 외의 응답은 바로 catch로 간다.
+            // fetch()로 통신을 하면, 백엔드가 전달해주는 response가 존재하기만 하면 성공으로 판단하지만
+            // axios로 통신을 하면, 백엔드가 2xx번대 성공 코드를 전달해줘야만 성공으로 판단
+            // 이외의 에러는 catch로 처리됨
+            // 보내줄때도 JSON.stringify() 할 필요 없음
+            await axiosInstance.post("/user/create", submitData);
 
-            // response도 http 메세지 내용이 기록되기 때문에 string을 JSON으로 파싱해야 함
-            // response.json() : JSON 문자열 → 객체
-            // response = { ok: boolean, message: string }
-            // response.json()을 하게 되면 백엔드에서 응답한 내용인 response.message를 JSON으로 파싱
-            const result = await response.json();
+            // 성공을 했었을때 백엔드가 전달해준 내용은 response.data에 객체 상태로 존재함 (JSON 파싱할 필요 없음)
 
-            // 그런데, 백엔드에서 500번대이든 400번대이든 회원가입 실패메세지를 돌려줘도, 프론트 엔드 입장에서는 응답이 왔으니 성공했다고 본다.
-            // 우리의 논리를 통해, "우리가 생각하는" 성공인지를 판별
-            // response.ok 프로퍼티 안에 response 상태 코드가 200번대라면 true, 아니라면 false
-            if (!response.ok) {
-                // 우리는 result.message가 있을것을 알고 있지만, 타입스크립트는 모르니깐, 혹시모를 상황에 대비한다. (논리합을통해서)
-                throw new Error(result.message || "회원가입 중 오류가 발생했습니다.");
-            }
-
-            // 백엔드에게 전송해서 성공
+            // 백엔드에게 전송해서 성공(200번대 : 진짜 성공)
             alert("회원가입이 완료되었습니다. 로그인을 진행해주세요. ");
             navigate("/auth/signin");
         } catch (error) {
-            console.log(error);
+            // 기본 에러 메세지를 미리 넣어서 errorMessage 마련
+            let errorMessage = "회원가입 중 오류가 발생했습니다.";
 
-            if (error instanceof Error) {
-                const errorMessage = error.message;
-
-                if (errorMessage === "이미 사용 중인 아이디입니다.") {
-                    setError("username", { message: errorMessage });
-                    return;
-                }
-
-                if (errorMessage === "이미 가입된 이메일입니다.") {
-                    setError("email", { message: errorMessage });
-                    return;
-                }
-
-                if (errorMessage === "이미 사용 중인 닉네임입니다.") {
-                    setError("nickname", { message: errorMessage });
-                    return;
-                }
-
-                setError("root", { message: errorMessage });
-                return;
+            // 지금 catch된 error가 axios의 에러인지 판별
+            if (axios.isAxiosError(error)) {
+                // axios에서 발생된 에러라면, 백엔드에서 제공을 한 내용이 error.response.data.message에 존재
+                errorMessage = error.response?.data?.message || errorMessage;
+            } else if (error instanceof Error) {
+                // axios에서 발생한 에러가 아닌, 자바스크립트 표준 에러 객체라면
+                // error.message에 담긴 에러 내용을 errorMessage에 저장
+                errorMessage = error.message;
             }
 
-            // 진짜 예상 못한 에러
-            setError("root", {
-                message: "회원가입에 실패했습니다. 다시 시도해주세요.",
-            });
+            setError("root", { message: errorMessage });
         }
     };
 
@@ -211,15 +183,18 @@ function SignUpPage() {
                         </Select>
                         {errors.gender && <ErrorMessage>{errors.gender.message}</ErrorMessage>}
                     </InputGroup>
-                    <Button
-                        type={"submit"}
-                        fullWidth={true}
-                        color={"primary"}
-                        variant={"contained"}
-                        disabled={isSubmitting}>
-                        회원가입
-                    </Button>
                 </FormBox>
+
+                {errors.root && <RootErrorMessage>{errors.root.message}</RootErrorMessage>}
+
+                <Button
+                    type={"submit"}
+                    fullWidth={true}
+                    color={"primary"}
+                    variant={"contained"}
+                    disabled={isSubmitting}>
+                    회원가입
+                </Button>
             </FormCard>
         </AuthContainer>
     );
@@ -320,4 +295,12 @@ const ErrorMessage = styled.span`
     font-size: 13px;
     color: ${props => props.theme.colors.error};
     font-weight: 500;
+`;
+
+const RootErrorMessage = styled.p`
+    font-size: 14px;
+    text-align: center;
+    color: ${props => props.theme.colors.error};
+    font-weight: 500;
+    margin-bottom: 50px;
 `;
