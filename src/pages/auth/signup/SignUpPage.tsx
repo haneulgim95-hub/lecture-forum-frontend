@@ -4,8 +4,10 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import styled from "styled-components";
 import { Gender } from "../../../types/user.type.ts";
 import Button from "../../../components/common/button/Button.tsx";
+import { useNavigate } from "react-router";
 
 function SignUpPage() {
+    const navigate = useNavigate();
     // 회원가입 화면
 
     // input들을 react-hook-form으로 관리
@@ -25,17 +27,59 @@ function SignUpPage() {
     const {
         register,
         handleSubmit,
+        setError,
         formState: { errors, isSubmitting },
     } = useForm<SignUpInputType>({
         resolver: zodResolver(signUpSchema),
         mode: "onBlur",
     });
 
-    const onSubmit = () => {};
+    const onSubmit = async (data: SignUpInputType) => {
+        try {
+            const { passwordConfirm, ...submitData } = data;
+
+            const response = await fetch("http://localhost:8000/user/create", {
+                method: "POST",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify(submitData),
+            });
+            // response = {"ok" : boolean, "message": string}
+            const result = await response.json();
+
+            if (!response.ok) {
+                throw new Error(result.message || "회원가입 중 오류가 발생하였습니다.");
+            }
+
+            alert("회원가입이 완료되었습니다. 로그인을 진행해주세요.");
+            navigate("/auth/signin");
+        } catch (error) {
+            if (error instanceof Error) {
+                const errorMessage = error.message;
+                if (errorMessage === "이미 사용 중인 아이디입니다.") {
+                    setError("username", { message: errorMessage });
+                    return;
+                }
+                if (errorMessage === "이미 가입된 이메일입니다.") {
+                    setError("email", { message: errorMessage });
+                    return;
+                }
+                if (errorMessage === "이미 사용 중인 닉네임입니다.") {
+                    setError("nickname", { message: errorMessage });
+                    return;
+                }
+                setError("root", { message: errorMessage });
+                return;
+            }
+            console.log(error);
+
+            // 진짜 예상 못한 에러
+            setError("root", { message: "회원가입에 실패했습니다. 다시 시도해주세요." });
+        }
+    };
 
     return (
         <AuthContainer>
-            <FormCard onSubmit={handleSubmit(onsubmit)}>
+            <FormCard onSubmit={handleSubmit(onSubmit)}>
                 <Title>회원가입</Title>
                 <SubTitle>토론대난투에 오신 것을 환영합니다!</SubTitle>
                 <FormBox>
