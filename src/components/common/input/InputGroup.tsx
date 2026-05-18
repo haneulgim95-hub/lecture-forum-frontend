@@ -31,7 +31,7 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
 function InputGroup({ label, id, errorMessage, registerObj, ...props}: Props) {
     return (
         <StyledInputGroup>
-            {label && <Label htmlFor={id}>abc</Label>}
+            {label && <Label htmlFor={id}>{label}</Label>}
             <Input id={id} $hasError={!!errorMessage} {...registerObj} {...props}/>
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
         </StyledInputGroup>

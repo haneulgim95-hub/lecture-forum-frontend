@@ -10,6 +10,10 @@ const StyledButton = styled.button<{
     $fullWidth?: boolean;
 }>`
     width: ${props=> props.$fullWidth? "100%" : "auto"};
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    aspect-ratio: ${props => props.$variant === "icon" ? "1" : "auto"};
     font-size: 14px;
     font-weight: 600;
     color: ${props => (props.$variant === "contained" ? "#ffffff" : "inherit")};

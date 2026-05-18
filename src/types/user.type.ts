@@ -15,3 +15,25 @@ export const Gender = {
 export type GenderType = typeof Gender[keyof typeof Gender];
 // typeof 키워드 : 해당 변수의 타입을 반환
 // keyof 키워드 : 해당 객체의 키를 반환
+
+export const Role = {
+    USER: "USER",
+    ADMIN: "ADMIN",
+}
+
+export type RoleType = typeof Role[keyof typeof Role];
+
+// 백엔드에서는 prisma가 대신 해준것이고, 프론트엔드에서는 타입을 직접 만들어줘야 한다.
+export interface User {
+    id: number;
+    createdAt: Date;
+    updatedAt: Date;
+    username: string;
+    name: string;
+    nickname: string;
+    email: string;
+    phoneNumber: string | null;
+    birthdate: Date | null;
+    gender: GenderType;
+    role: RoleType;
+}

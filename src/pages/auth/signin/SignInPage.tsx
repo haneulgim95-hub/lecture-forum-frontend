@@ -17,9 +17,11 @@ import {
     AuthTitle,
 } from "../../../components/auth/auth.style.tsx";
 import InputGroup from "../../../components/common/input/InputGroup.tsx";
+import { useAuthStore } from "../../../stores/auth/authStore.ts";
 
 function SignInPage() {
     const navigate = useNavigate();
+    const { login } =  useAuthStore();
 
     const {
         register,
@@ -46,11 +48,11 @@ function SignInPage() {
             // }
             // user 정보와 token을 뽑아와야 함
             const { user, token } = response.data.data;
+            login(user, token);
 
             // 신분증 발금은 login이라는 행위를 할 때에만 발급이 됨
             // 그렇기 떄문에 이 token을 어딘가(ContextAPI든, localStorage든)에 저장해서
             // 사용자가 백엔드에 요청을 할 떄마다 꺼내서 집어넣고 요청을 해야 함
-            localStorage.setItem("accessToken", token);
 
             alert("로그인에 성공했습니다!");
             navigate("/");
@@ -103,7 +105,7 @@ function SignInPage() {
                     color={"primary"}
                     variant={"contained"}
                     disabled={isSubmitting}>
-                    회원가입
+                    로그인
                 </Button>
             </AuthFormCard>
         </AuthContainer>
