@@ -23,8 +23,6 @@ const AdminContainer = styled.div`
     background-color: ${props => props.theme.colors.background.default};
 `;
 
-
-
 const AdminMain = styled.main`
     flex: 1;
     padding: 32px;
