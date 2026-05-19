@@ -140,5 +140,4 @@ const AdminTd = styled.td`
     font-size: 14px;
     border-bottom: 1px solid ${props => props.theme.colors.divider};
     vertical-align: middle;
-    color: ${props => props.theme.colors.text.disabled};
 `;
