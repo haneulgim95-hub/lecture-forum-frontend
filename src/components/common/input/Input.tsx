@@ -15,7 +15,7 @@ const Input = styled.input<{ $hasError: boolean }>`
     }
 
     &:focus {
-        ${props => (props.$hasError ? props.theme.colors.error : props.theme.colors.primary)};
+        border-color: ${props => (props.$hasError ? props.theme.colors.error : props.theme.colors.primary)};
     }
 `;
 
