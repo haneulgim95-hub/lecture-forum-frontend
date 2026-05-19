@@ -1,10 +1,21 @@
 import { useEffect, useState } from "react";
 import adminCategoryApi from "../../../api/admin/adminCategoryApi.ts";
-import type { Category } from "../../../types/category.type.ts";
-import styled from "styled-components";
+import { type Category, CategoryStatus } from "../../../types/category.type.ts";
 import Button from "../../../components/common/button/Button.tsx";
 import { Link } from "react-router";
 import Card from "../../../components/common/card/Card.tsx";
+import {
+    AdminContainer,
+    AdminLoadingText,
+    AdminPageHeader,
+    AdminTable,
+    AdminTableWrapper,
+    AdminTd,
+    AdminTh,
+    AdminTitle,
+} from "../../../components/admin/admin.style.tsx";
+import Badge from "../../../components/common/badge/ Badge.tsx";
+import { FiRefreshCcw, FiTrash2 } from "react-icons/fi";
 
 function AdminCategoryListPage() {
     const [categories, setCategories] = useState<Category[]>([]);
@@ -30,6 +41,20 @@ function AdminCategoryListPage() {
         // 얘도 비동기 함수이니깐 또다시 then을 붙여준다.
         loadCategories().then(() => {});
     }, []);
+
+    const handleToggleCategoryStatus = async (id: number) => {
+        try {
+            const result = await adminCategoryApi.toggleCategoryStatus(id);
+            alert(`카테고리가 성공적으로 ${result.status}로 변경되었습니다.`);
+
+            setCategories(prev =>
+                prev.map(item => (item.id === id ? { ...item, status: result.status } : item)),
+            );
+        } catch (error) {
+            console.log(error);
+            alert("카테고리 변경 중 오류가 발생되었습니다.");
+        }
+    };
 
     return (
         <AdminContainer>
@@ -72,8 +97,30 @@ function AdminCategoryListPage() {
                                     <tr key={item.id}>
                                         <AdminTd>{item.id}</AdminTd>
                                         <AdminTd>{item.name}</AdminTd>
-                                        <AdminTd>{item.status}</AdminTd>
-                                        <AdminTd>기능</AdminTd>
+                                        <AdminTd>
+                                            <Badge
+                                                color={
+                                                    item.status === CategoryStatus.ACTIVE
+                                                        ? "success"
+                                                        : "secondary"
+                                                }>
+                                                {item.status === CategoryStatus.ACTIVE
+                                                    ? "활성"
+                                                    : "비활성"}
+                                            </Badge>
+                                        </AdminTd>
+                                        <AdminTd>
+                                            <Button
+                                                color={"primary"}
+                                                variant={"icon"}
+                                                onClick={() => handleToggleCategoryStatus(item.id)}>
+                                                {item.status === CategoryStatus.ACTIVE ? (
+                                                    <FiTrash2 size={18} />
+                                                ) : (
+                                                    <FiRefreshCcw size={18} />
+                                                )}
+                                            </Button>
+                                        </AdminTd>
                                     </tr>
                                 ))}
                             </tbody>
@@ -86,58 +133,3 @@ function AdminCategoryListPage() {
 }
 
 export default AdminCategoryListPage;
-
-const AdminContainer = styled.div`
-    display: flex;
-    flex-direction: column;
-    gap: 24px;
-    width: 100%;
-`;
-
-const AdminPageHeader = styled.div`
-    display: flex;
-    justify-content: space-between;
-    align-items: center;
-    margin-bottom: 8px;
-`;
-
-const AdminTitle = styled.h2`
-    font-size: 24px;
-    font-weight: 700;
-`;
-
-const AdminLoadingText = styled.div`
-    text-align: center;
-    padding: 40px;
-    color: ${props => props.theme.colors.text.disabled};
-`;
-
-// pc에서는 상관 없는데,  모바일 때문에 한 번 테이블을 감싸는 것
-const AdminTableWrapper = styled.div`
-    overflow-x: auto; // x축 방향으로 스크롤바를 허용하겠다.
-`;
-
-const AdminTable = styled.table`
-    width: 100%;
-    border-collapse: collapse;
-`;
-
-const AdminTh = styled.th<{ $width?: string }>`
-    width: ${props => props.$width};
-    text-align: left;
-    padding: 12px 16px;
-    background-color: ${props => props.theme.colors.background.default};
-    color: ${props => props.theme.colors.text.disabled};
-    font-size: 13px;
-    font-weight: 600;
-    border-bottom: 2px solid ${props => props.theme.colors.divider};
-`;
-
-const AdminTd = styled.td`
-    // td는 flex를 쓸 수 없음
-    // 그 안에 들어가는 요소에 대한 정렬은 text-align과 vertical-align을 통해서 해야 함
-    padding: 16px;
-    font-size: 14px;
-    border-bottom: 1px solid ${props => props.theme.colors.divider};
-    vertical-align: middle;
-`;
