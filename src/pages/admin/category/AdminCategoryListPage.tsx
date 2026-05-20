@@ -5,6 +5,7 @@ import Button from "../../../components/common/button/Button.tsx";
 import { Link } from "react-router";
 import Card from "../../../components/common/card/Card.tsx";
 import {
+    AdminButtonGroup,
     AdminContainer,
     AdminLoadingText,
     AdminPageHeader,
@@ -15,7 +16,7 @@ import {
     AdminTitle,
 } from "../../../components/admin/admin.style.tsx";
 import Badge from "../../../components/common/badge/Badge.tsx";
-import { FiRefreshCcw, FiTrash, FiTrash2 } from "react-icons/fi";
+import { FiEdit, FiRefreshCcw, FiTrash2 } from "react-icons/fi";
 
 function AdminCategoryListPage() {
     const [categories, setCategories] = useState<Category[]>([]);
@@ -49,9 +50,8 @@ function AdminCategoryListPage() {
             alert(`카테고리가 성공적으로 ${result.status}로 변경되었습니다.`);
 
             // 백엔드에게 목록을 요청하지 않고, 화면의 데이터만 교체해줄 것임
-            setCategories(prev =>
-                prev.map(item => (item.id === id ? { ...item, status: result.status } : item)),
-            );
+            setCategories(props => props.map(item => item.id === id ? {...item, status: result.status} : item));
+
         } catch (error) {
             console.log(error);
             alert("카테고리 변경 중 오류가 발생되었습니다.");
@@ -112,16 +112,27 @@ function AdminCategoryListPage() {
                                             </Badge>
                                         </AdminTd>
                                         <AdminTd>
-                                            <Button
-                                                color={"primary"}
-                                                variant={"icon"}
-                                                onClick={() => handleToggleCategoryStatus(item.id)}>
-                                                {item.status === CategoryStatus.ACTIVE ? (
-                                                    <FiTrash2 size={18} />
-                                                ) : (
-                                                    <FiRefreshCcw size={18} />
-                                                )}
-                                            </Button>
+                                            <AdminButtonGroup>
+                                                <Button
+                                                    color={"primary"}
+                                                    variant={"icon"}
+                                                    as={Link}
+                                                    to={`/admin/category/edit/${item.id}`}>
+                                                    <FiEdit />
+                                                </Button>
+                                                <Button
+                                                    color={"primary"}
+                                                    variant={"icon"}
+                                                    onClick={() =>
+                                                        handleToggleCategoryStatus(item.id)
+                                                    }>
+                                                    {item.status === CategoryStatus.ACTIVE ? (
+                                                        <FiTrash2 size={18} />
+                                                    ) : (
+                                                        <FiRefreshCcw size={18} />
+                                                    )}
+                                                </Button>
+                                            </AdminButtonGroup>
                                         </AdminTd>
                                     </tr>
                                 ))}
