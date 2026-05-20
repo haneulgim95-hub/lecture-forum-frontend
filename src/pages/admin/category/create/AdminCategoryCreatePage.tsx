@@ -24,7 +24,7 @@ function AdminCategoryCreatePage() {
     const {
         register,
         handleSubmit,
-        setErrors,
+        setError,
         formState: { errors, isSubmitting },
     } = useForm<AdminCreateCategoryInputType>({
         resolver: zodResolver(adminCreateCategorySchema),
@@ -37,7 +37,7 @@ function AdminCategoryCreatePage() {
             navigate("/admin/category");
         } catch (error) {
             if (axios.isAxiosError(error) && error.response?.status === 409) {
-                setErrors("name", {message: "이미 존재하는 카테고리 명입니다."});
+                setError("name", {message: "이미 존재하는 카테고리 명입니다."});
             } else {
                 alert("카테고리 생성 중 오류가 발생했습니다.");
             }
