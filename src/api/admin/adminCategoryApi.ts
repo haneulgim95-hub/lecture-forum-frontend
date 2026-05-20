@@ -1,0 +1,15 @@
+import axiosInstance from "../axiosInstance.ts";
+import type { Category } from "../../types/category.type.ts";
+import type {AdminCreateCategoryInputType} from "../../schemas/admin/category/adminCreateCategorySchema.ts";
+
+const fetchCategoryList = async (): Promise<Category[]> => {
+    const response = await axiosInstance.get("/admin/category/list")
+    return response.data.dat;
+};
+
+const createCategory = async (data: AdminCreateCategoryInputType):Promise<Category> => {
+    const response = await axiosInstance.post("/admin/category/create", data);
+    return response.data.data;
+};
+
+export default {fetchCategoryList , createCategory};
