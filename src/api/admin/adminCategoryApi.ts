@@ -3,10 +3,17 @@ import type { Category } from "../../types/category.type.ts";
 import type { AdminCreateCategoryInputType } from "../../schemas/admin/category/adminCreateCategorySchema.ts";
 import type { AdminEditCategoryInputType } from "../../schemas/admin/category/adminEditCategorySchema.ts";
 
+// 카테고리 목록 조회
 const fetchCategoryList = async (): Promise<Category[]> => {
     const response = await axiosInstance.get("/admin/category/list");
     return response.data.data;
 };
+
+// id로 카테고리 조회
+const fetchCategoryById = async (id: number): Promise<Category> => {
+    const response = await axiosInstance.get(`/admin/category/${id}`);
+    return response.data.data;
+}
 
 // 카테고리 등록 API
 const createCategory = async (data: AdminCreateCategoryInputType): Promise<Category> => {
@@ -29,6 +36,7 @@ const toggleCategoryStatus = async (id: number) => {
 
 export default {
     fetchCategoryList,
+    fetchCategoryById,
     createCategory,
     toggleCategoryStatus,
     updateCategory,
