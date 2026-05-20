@@ -14,7 +14,7 @@ function Badge({ children, color = "default" }: BadgeProps) {
 
 export default Badge;
 
-const StyledBadge = styled.span<{ $color: BadgeColor }>`
+const StyledBadge = styled.span<{ $color?: BadgeColor }>`
     display: inline-flex;
     justify-content: center;
     align-items: center;
