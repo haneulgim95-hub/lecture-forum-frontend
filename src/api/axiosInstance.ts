@@ -1,4 +1,5 @@
 import * as axios from "axios";
+import { useAuthStore } from "../stores/auth/authStore.ts";
 
 const BASE_URL = import.meta.env.VITE_API_BASE_URL || "";
 
@@ -16,3 +17,13 @@ const api = axios.create({
 export default api;
 
 // 인터셉터 : 요청을 보내기 전에 axios가 내용을 가로채서 내용을 변경할 수 잇음.
+
+api.interceptors.request.use((config) => {
+    const {token} = useAuthStore.getState();
+
+    if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+    }
+
+    return config;
+})
