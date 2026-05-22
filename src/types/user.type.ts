@@ -34,7 +34,7 @@ export interface User {
     nickname: string;
     email: string;
     phoneNumber: string | null;
-    birthdate: Date | null;
+    birthdate: string | null;
     gender: GenderType;
     role: RoleType;
 }
