@@ -26,8 +26,9 @@ export type RoleType = typeof Role[keyof typeof Role];
 // 백엔드에서는 prisma가 대신 해준것이고, 프론트엔드에서는 타입을 직접 만들어줘야 한다.
 export interface User {
     id: number;
-    createdAt: Date;
-    updatedAt: Date;
+    createdAt: string;
+    updatedAt: string;
+    deletedAt: string | null;
     username: string;
     name: string;
     nickname: string;
