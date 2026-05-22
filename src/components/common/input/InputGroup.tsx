@@ -12,6 +12,7 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
     errorMessage?: string;
     // register를 실행하면 만들어지는 결과가 들어갈수 있는 타입
     registerObj?: UseFormRegisterReturn;
+    wrap?: boolean;
 }
 
 //  원래 input을 수동 관리를 하게 된다면, <input onChange={()=>{}} value={} name="username" /> 형태
@@ -28,9 +29,9 @@ interface Props extends InputHTMLAttributes<HTMLInputElement> {
 // 받아서 Input 내부에 흡뿌려주도록 함
 // register()를 실행한 결과 객체의 타입은 UseFormRegisterReturn
 
-function InputGroup({ label, id, errorMessage, registerObj, ...props}: Props) {
+function InputGroup({ label, id, errorMessage, registerObj, wrap, ...props}: Props) {
     return (
-        <StyledInputGroup>
+        <StyledInputGroup $wrap={wrap}>
             {label && <Label htmlFor={id}>{label}</Label>}
             <Input id={id} $hasError={!!errorMessage} {...registerObj} {...props}/>
             {errorMessage && <ErrorMessage>{errorMessage}</ErrorMessage>}
