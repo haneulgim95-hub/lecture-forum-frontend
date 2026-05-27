@@ -21,11 +21,16 @@ import { FiEdit, FiTrash } from "react-icons/fi";
 function AdminUserListPage() {
     const [list, setList] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
+    const SIZE = 20;
+    const [page, setPage] = useState(1);
+    const [total, setTotal] = useState(0);
+    const totalPage = Math.ceil(total / SIZE);
 
-    const loadUsers = async () => {
+    const loadUsers = async (page: number) => {
         try {
-            const result = await adminUserApi.fetchUserList();
-            setList(result);
+            const result = await adminUserApi.fetchUserList(page, SIZE);
+            setList(result.list);
+            setTotal(result.total);
         } catch (error) {
             console.log(error);
             alert("유저 목록을 불러오는데 실패했습니다.");
@@ -41,10 +46,11 @@ function AdminUserListPage() {
         // 함수 안에 함수를 선언하고, 그걸 실행했었음
         // 함수 스코프에 의해 외부에서는 실행이 불가능함 => 외부에서도 저 기능을 이용해야 되는 상황이 되었으미
         // 그 함수를 밖으로 뺌
+        window.scrollTo({top: 0, behavior: "smooth"});
 
         // eslint-disable-next-line react-hooks/set-state-in-effect
-        loadUsers().then(() => {});
-    }, []);
+        loadUsers(page).then(() => {});
+    }, [page]);
 
     const handleDelete = async (id: number) => {
         // confirm은 사용자에게 경고창을 통해 확인을 받는 메서드. true/false가 반환됨
@@ -72,6 +78,10 @@ function AdminUserListPage() {
             console.log(error);
             alert("사용자 삭제 중 오류가 발생했습니다.");
         }
+    };
+
+    const handlePageChange = (page: number) => {
+        setPage(page);
     };
 
     return (
@@ -162,6 +172,10 @@ function AdminUserListPage() {
                         </AdminTable>
                     </AdminTableWrapper>
                 )}
+                {total > 0 && <div style={{display: "flex", alignItems: "center", justifyContent: "center"}}>
+                    <Button color={"primary"} variant={"text"} disabled={page === 1} onClick={() => handlePageChange(page - 1)}>이전</Button>
+                    <Button color={"primary"} variant={"text"} disabled={page === totalPage} onClick={() => handlePageChange(page + 1)}>다음</Button>
+                </div>}
             </Card>
         </AdminContainer>
     );
