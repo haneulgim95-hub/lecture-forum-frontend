@@ -13,7 +13,7 @@ import {
     AdminTitle,
 } from "../../../components/admin/admin.style.tsx";
 import Button from "../../../components/common/button/Button.tsx";
-import { Link } from "react-router";
+import { Link, useSearchParams} from "react-router";
 import Card from "../../../components/common/card/Card.tsx";
 import Badge from "../../../components/common/badge/Badge.tsx";
 import { FiEdit, FiTrash } from "react-icons/fi";
@@ -21,9 +21,10 @@ import { FiEdit, FiTrash } from "react-icons/fi";
 function AdminUserListPage() {
     const [list, setList] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
+    const [searchParams, setSearchParams] = useSearchParams();
+    const page = Number(searchParams.get("page")) || 1;
 
     const SIZE = 20; // 한 페이지에 몇개를 보여줄수 있는지
-    const [page, setPage] = useState(1); // 출력하고 있는 페이지 번호(초기값을 1페이지로 해둔다)
     const [total, setTotal] = useState(0);
     const totalPage = Math.ceil(total / SIZE); // Math.ceil() : 올림 메서드
 
@@ -47,6 +48,8 @@ function AdminUserListPage() {
         // 함수 안에 함수를 선언하고, 그걸 실행했었음
         // 함수 스코프에 의해 외부에서는 실행이 불가능함 => 외부에서도 저 기능을 이용해야 되는 상황이 되었으미
         // 그 함수를 밖으로 뺌
+
+        window.scrollTo({top: 0, behavior: "instant"});
 
         // eslint-disable-next-line react-hooks/set-state-in-effect
         loadUsers(page).then(() => {});
@@ -86,7 +89,8 @@ function AdminUserListPage() {
     };
 
     const handlePageChange = (page: number) => {
-        setPage(page);
+        searchParams.set("page", page.toString());
+        setSearchParams(searchParams);
     };
 
     return (
