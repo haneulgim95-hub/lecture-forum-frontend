@@ -13,7 +13,7 @@ import {
     AdminTitle,
 } from "../../../components/admin/admin.style.tsx";
 import Button from "../../../components/common/button/Button.tsx";
-import { Link } from "react-router";
+import { Link, useSearchParams} from "react-router";
 import Card from "../../../components/common/card/Card.tsx";
 import Badge from "../../../components/common/badge/Badge.tsx";
 import { FiEdit, FiTrash } from "react-icons/fi";
@@ -22,8 +22,12 @@ function AdminUserListPage() {
     const [list, setList] = useState<User[]>([]);
     const [loading, setLoading] = useState(true);
 
+    const [ searchParams, setSearchParams ] = useSearchParams();
+    // const pageParams = searchParams.get("page");
+    // const page = pageParams ? Number(pageParams) : 1;
+    const page = Number(searchParams.get("page")) || 1; // 이것 자체가 state 임
+
     const SIZE = 20; // 한 페이지에 몇개를 보여줄수 있는지
-    const [page, setPage] = useState(1); // 출력하고 있는 페이지 번호(초기값을 1페이지로 해둔다)
     const [total, setTotal] = useState(0);
     const totalPage = Math.ceil(total / SIZE); // Math.ceil() : 올림 메서드
 
@@ -47,6 +51,9 @@ function AdminUserListPage() {
         // 함수 안에 함수를 선언하고, 그걸 실행했었음
         // 함수 스코프에 의해 외부에서는 실행이 불가능함 => 외부에서도 저 기능을 이용해야 되는 상황이 되었으미
         // 그 함수를 밖으로 뺌
+
+        // 사용자의 스크롤을 이동시키는 명령
+        window.scrollTo({ top: 0, behavior: "instant" });
 
         // eslint-disable-next-line react-hooks/set-state-in-effect
         loadUsers(page).then(() => {});
@@ -86,7 +93,10 @@ function AdminUserListPage() {
     };
 
     const handlePageChange = (page: number) => {
-        setPage(page);
+        // state의 값을 바로 바꾸는게 아니라,
+        // 쿼리스트링에 존재하는 page의 값을 변경해야 함
+        searchParams.set("page", page.toString());      // searchParams 내부의 page 프로퍼티 값을 변경
+        setSearchParams(searchParams);                          // 주소 변경
     };
 
     return (
@@ -202,3 +212,18 @@ function AdminUserListPage() {
 }
 
 export default AdminUserListPage;
+
+// 컴포넌트 생명주기
+// state라고 하는 저장소는 해당 컴포넌트가 화면에 살아있을 때만 유지됨
+// 컴포넌트가 해제(언마운트) => 그 안에 존재하던 데이터들 (state,변수,function)이 다 메모리에서 해제됨
+// 뒤로가기를 해서 다시 adminUserListPage를 불러와봤자 그데이터들은 다시 돌아오지 않음
+// adminUserLIstPage이 마운트 되면 page 라는 state가 새로 생기고 그 초기값이 1로 세팅되었음
+
+// 옛날 방식과 리액트가 다른점
+// 옛날방식: 진짜 브라우저가 갖고 있던 데이터를 그대로 보여줌
+// 리액트 : Single Page Application, 브라우저가 생각하는 물리 페이지는 1개임 (index.html)
+//          즉 실제주소는 / 뿐이고, 그 안에서 리액트 라우터가 "가상 주소"로 동작시키는 중임
+//          뒤로가기를 누르면 /admin/user로 이동하지만 이건 가상주소 이므로
+//          리액트가 재실행되면서 /admin/user라는 주소에 라우팅된 컴포넌트를 화면에 다시 그림
+
+// 쿼리스트링을 이용해야 되고, 쿼리스트링이 있으면 그걸 state의 초기값으로 써야겠다 , 쿼리스트링이 없으면 그냥 1을 초기값으로 쓴다
