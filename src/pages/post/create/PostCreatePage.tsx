@@ -42,6 +42,8 @@ function PostCreatePage() {
     // 그 때 useForm이 관리하는 state 중 categoryId의 값을 업데이트하자
 
     useEffect(() => {
+        // categoryId가 준비되면,
+        // React Hook Form이 관리하는 form state를 다시 갱신해라
         if (categoryId) {
             reset({ categoryId: Number(categoryId) });
         }
