@@ -28,6 +28,48 @@ export const PostTitle = styled.h2`
     }
 `;
 
+export const FormWrapper = styled.form`
+    background-color: ${props => props.theme.colors.background.paper};
+    border-radius: 8px;
+    border: 1px solid ${props => props.theme.colors.divider};
+    padding: 32px;
+    display: flex;
+    flex-direction: column;
+    gap: 24px;
+`;
+
+export const FormDivider = styled.hr`
+    border: none;
+    border-top: 1px solid ${props => props.theme.colors.divider};
+`;
+
+export const VoteSectionTitle = styled.h3`
+    font-size: 18px;
+    font-weight: 700;
+    margin-bottom: -15px;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    
+    small {
+        font-size: 13px;
+        font-weight: 400;
+        color: ${props => props.theme.colors.text.disabled};
+    }
+`;
+
+export const VoteSectionDescription = styled.p`
+    font-size: 14px;
+    color: ${props => props.theme.colors.secondary};
+`;
+
+export const VoteFieldsFlex = styled.div`
+    display: flex;
+    gap: 32px;
+    flex-wrap: wrap;
+    width: 100%;
+`;
+
 export const BoardWrapper = styled.div`
     background-color: ${props => props.theme.colors.background.paper};
     border-radius: 8px;
