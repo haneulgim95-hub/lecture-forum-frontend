@@ -14,6 +14,7 @@ import {
 } from "../../components/post/post.style.tsx";
 import Button from "../../components/common/button/Button.tsx";
 import {useAuthStore} from "../../stores/auth/authStore.ts";
+import Pagination from "../../components/common/pagination/Pagination.tsx";
 
 function PostListPage() {
     // 주소를 통해 categoryId가 오는구나
@@ -55,6 +56,13 @@ function PostListPage() {
 
     // 게시판 목록, 게시글 상세, 게시글 작성, 게시글 수정
 
+    const handlePageChange = (page: number) => {
+        // state의 값을 바로 바꾸는게 아니라,
+        // 쿼리스트링에 존재하는 page의 값을 변경해야 함
+        searchParams.set("page", page.toString()); // searchParams 내부의 page 프로퍼티 값을 변경
+        setSearchParams(searchParams); // 주소 변경
+    };
+
     return (
         <PostContainer>
             <PostPageHeader>
@@ -94,10 +102,38 @@ function PostListPage() {
                                     </BoardTd>
                                 </tr>
                             )}
+                            {list.map(item => (
+                                <tr key={item.id}>
+                                    <BoardTd>{item.id}</BoardTd>
+                                    <BoardTd className={"title-cell"}>{item.title}</BoardTd>
+                                    <BoardTd>{item.user.nickname}</BoardTd>
+                                    <BoardTd>
+                                        {/*
+                                            Date 클래스의 메서드 중 toLocaleString()은
+                                            해당 날짜를 사용자의 지역 시간에 맞게 문자열로 반환하는 메서드
+                                             매개변수를 생략하면 자동으로 보는 사용자에 맞춰 제공됨
+                                            .toLocaleString(해당 지역, 옵션 객체)
+                                        */}
+                                        {new Date(item.createdAt).toLocaleString("ko-kr", {
+                                            year: "numeric",
+                                            month: "2-digit",
+                                            day: "2-digit",
+                                        })}
+                                    </BoardTd>
+                                    <BoardTd>{item.views}</BoardTd>
+                                </tr>
+                            ))}
                         </tbody>
                     </BoardTable>
                 )}
             </BoardWrapper>
+            {total > 0 && (
+                <Pagination
+                    currentPage={page}
+                    totalPage={totalPage}
+                    onPageChange={handlePageChange}
+                />
+            )}
         </PostContainer>
     );
 }
