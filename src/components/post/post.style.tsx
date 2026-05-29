@@ -120,6 +120,52 @@ export const BoardTd = styled.td<{$align?: "left" | "center" | "right"}>`
     }
 `;
 
+export const DetailWrapper = styled.div`
+    background-color: ${props => props.theme.colors.background.paper};
+    border: 1px solid ${props => props.theme.colors.divider};
+    border-radius: 8px;
+    padding: 32px;
+`;
+
+export const DetailHeader = styled.div`
+    border-bottom: 1px solid ${props => props.theme.colors.divider};
+    padding-bottom: 24px;
+    margin-bottom: 24px;
+`;
+
+export const DetailTitle = styled.h1`
+    font-size: 28px;
+    font-weight: 700;
+    margin-bottom: 16px;
+`;
+
+export const DetailInfo = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
+    color: ${props => props.theme.colors.text.disabled};
+    
+    .left-info {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+    }
+    
+    .right-info {
+        display: flex;
+        gap: 16px;
+        align-items: center;
+    }
+`;
+
+export const DetailContent = styled.div`
+    font-size: 16px;
+    line-height: 1.6;
+    min-height: 100px;
+    white-space: pre-wrap;
+`;
+
 export const LoadingText = styled.div`
     text-align: center;
     padding: 100px 0;

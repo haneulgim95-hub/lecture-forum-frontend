@@ -58,7 +58,7 @@ function PostListPage() {
 
     const onPageChange = (page: number) => {
         searchParams.set("page", page.toString());
-        setSearchParams(searchParams)
+        setSearchParams(searchParams);
     };
 
     return (
@@ -103,7 +103,9 @@ function PostListPage() {
                             {list.map(item => (
                                 <tr key={item.id}>
                                     <BoardTd>{item.id}</BoardTd>
-                                    <BoardTd className={"title-cell"}>{item.title}</BoardTd>
+                                    <BoardTd className={"title-cell"}>
+                                        <Link to={`/post/${item.id}`}>{item.title}</Link>
+                                    </BoardTd>
                                     <BoardTd>{item.user.nickname}</BoardTd>
                                     <BoardTd>
                                         {/*
@@ -126,7 +128,7 @@ function PostListPage() {
                 )}
             </BoardWrapper>
 
-            <Pagination currentPage={page} totalPage={totalPage} onPageChange={onPageChange}/>
+            <Pagination currentPage={page} totalPage={totalPage} onPageChange={onPageChange} />
         </PostContainer>
     );
 }
