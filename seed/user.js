@@ -80,4 +80,4 @@ async function generateUsers(count) {
     }
 }
 
-generateUsers(3).then(() => {}); // 30개를 만들꺼야!
+generateUsers(300).then(() => {}); // 30개를 만들꺼야!
