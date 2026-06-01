@@ -17,7 +17,7 @@ export interface Post {
     option2Text: string | null;
 
     // vote라는 프로퍼티(항목)은
-    // 글 목록에서만 있고 글 상세 에서는 없는 항목임
+    // 글 목록에서는 없고 글 상세 에는 있는 항목임
     // 그렇기 떄문에 union을 써서 null 일 수 있음을 고지
     vote: {
         option1Count: number;
