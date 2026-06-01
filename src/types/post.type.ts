@@ -13,4 +13,16 @@ export interface Post {
     // Generic Type 중 Pick이라는 타입이 존재
     // Pick<해당 타입,가져올 항목들>
     user: Pick<User, "id" | "nickname" | "email">
+    option1Text: string | null;
+    option2Text: string | null;
+
+    // vote라는 프로퍼티(항목)은
+    // 글 목록에서만 있고 글 상세 에서는 없는 항목임
+    // 그렇기 떄문에 union을 써서 null 일 수 있음을 고지
+    vote: {
+        option1Count: number;
+        option2Count: number;
+        totalCount: number;
+        hasVoted: boolean;
+    } | null;
 }

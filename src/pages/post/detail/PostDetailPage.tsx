@@ -1,42 +1,100 @@
-import { useLayoutEffect, useState } from "react";
+import {useCallback, useEffect, useLayoutEffect, useState } from "react";
 import type { Post } from "../../../types/post.type.ts";
 import { useNavigate, useParams } from "react-router";
 import postApi from "../../../api/user/postApi.ts";
 import {
+    BattleGround,
+    BattleTitle,
     DetailContent,
     DetailHeader,
     DetailInfo,
     DetailTitle,
     DetailWrapper,
-    PostContainer,
+    LoadingText,
+    PostContainer, VoteCard, VoteSection,
 } from "../../../components/post/post.style.tsx";
 import { useAuthStore } from "../../../stores/auth/authStore.ts";
 import { AdminButtonGroup } from "../../../components/admin/admin.style.tsx";
 import Button from "../../../components/common/button/Button.tsx";
+import { GiCrossedSwords } from "react-icons/gi";
+import { LuDroplet, LuFlame } from "react-icons/lu";
 
 function PostDetailPage() {
     const navigate = useNavigate();
-    const { id } = useParams<{ id: string }>();
     const [post, setPost] = useState<Post | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const { user } = useAuthStore();
-    useLayoutEffect(() => {
-        const loadPost = async () => {
-            try {
-                const data = await postApi.fetchPostById(Number(id));
-                setPost(data);
-            } catch (error) {
-                console.log(error);
-                alert("게시글을 불러오는 중 오류가 발생했습니다.");
-                navigate(-1);
-            } finally {
-                setIsLoading(false);
-            }
-        };
-        loadPost().then(() => {});
+    const [isVoting, setIsVoting] = useState(false);
+
+    const { id } = useParams<{ id: string }>();
+    const { user, isLoggedIn } = useAuthStore();
+
+    // 글 내용을 백엔드에게 불러오는 행위를 useEffect 밖에서 하기 위해
+    // loadPost 함수를 밖으로 빼게되면,
+    // useEffect() 밖에서 만든 함수를 useEffect 안에서 실행하게 되면
+    // state 내용이 바뀌는 행동을 React가 하게 되므로 문법적으로 잘못되었다고 하는것
+
+    // 이 문법 오류를 해결하기 위해서는 useCallback() 리액트 훅을 사용
+    // useCallback 사용은 useEffect와 동일하게 사용
+    // useCallback(함수, 의존성배열)
+    const loadPost = useCallback(async () => {
+        try {
+            const data = await postApi.fetchPostById(Number(id));
+            setPost(data);
+        } catch (error) {
+            console.log(error);
+            alert("게시글을 불러오는 중 오류가 발생했습니다.");
+            navigate(-1);
+        } finally {
+            setIsLoading(false);
+        }
     }, [id, navigate]);
 
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
+        loadPost().then(()=>{});
+    }, [id, loadPost]);
+
+    if (isLoading) {
+        return (
+            <PostContainer>
+                <LoadingText>글 내용을 불러오는 중입니다..</LoadingText>
+            </PostContainer>
+        );
+    }
+
     if (!post) return;
+
+    // post라고 하는 데이터가 불러온 이후에나 판별이 가능
+    const hasVoteSystem = !!post.option1Text && !!post.option2Text;
+    const totalVotes = post.vote?.totalCount || 0;
+    // 전체 투표 수가 0이면, option1 투표한 퍼센트를 50%로 가져가고, opt2 투표한  퍼센트도 50%
+
+    // Math.round(값, ) => 반올림
+    const opt1Percent =
+        totalVotes > 0 && post.vote ? Math.round((post.vote.option1Count / totalVotes) * 100) : 50;
+    const opt2Percent =
+        totalVotes > 0 && post.vote ? Math.round((post.vote.option2Count / totalVotes) * 100) : 50;
+
+    const handleVote = async (option: number) => {
+        // 들어온 option을 가지고, 백엔드에게 요청
+        if (!isLoggedIn) {
+            alert("투표에 참여하려면 로그인이 필요합니다.");
+            return;
+        }
+
+        setIsVoting(true);
+
+        try {
+            await postApi.votePost(Number(id), option);
+            // 여기서 글 내용을 다시 받아와야 할 필요가 있음
+            await loadPost();
+        } catch (error) {
+            console.log("투표 실패: ", error);
+            alert("투표 처리 중 오류가 발생했습니다.");
+        } finally {
+            setIsVoting(false);
+        }
+    };
 
     return (
         <PostContainer>
@@ -65,6 +123,33 @@ function PostDetailPage() {
                 </DetailHeader>
 
                 <DetailContent>{post.content}</DetailContent>
+
+                {hasVoteSystem && post.vote && (
+                    <BattleGround>
+                        <BattleTitle>
+                            <GiCrossedSwords size={24} color={"#EF4444"} />
+                            당신의 선택은?
+                        </BattleTitle>
+
+                        {/* 현재 사용자가 투표를 했을 때 / 안 했을 때 */}
+                        {post.vote.hasVoted ? (
+                            <div>투표 완료</div>
+                        ) : (
+                            <VoteSection>
+                                <VoteCard $color={"#EF4444"} onClick={() => handleVote(1)} disabled={isVoting}>
+                                    <LuFlame size={32} />
+                                    <h3>{post.option1Text}</h3>
+                                    <p>클릭하여 1번에 투표</p>
+                                </VoteCard>
+                                <VoteCard $color={"#3B82F6"} onClick={() => handleVote(2)} disabled={isVoting}>
+                                    <LuDroplet size={32} />
+                                    <h3>{post.option2Text}</h3>
+                                    <p>클릭하여 2번에 투표</p>
+                                </VoteCard>
+                            </VoteSection>
+                        )}
+                    </BattleGround>
+                )}
 
                 <AdminButtonGroup>
                     <Button color={"secondary"} variant={"contained"} onClick={() => navigate(-1)}>
