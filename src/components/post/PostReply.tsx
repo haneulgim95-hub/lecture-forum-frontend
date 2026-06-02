@@ -30,9 +30,13 @@ function PostReply({ postId }: Props) {
         mode: "onBlur",
     });
 
-    // submit을 하는데 zod가 "너 postId 없는데?"라서 진행이 안 됐던것
-    // postId는 PostReply 컴포넌트가 Props를 통해 전달을 받고 있는데
-    // 그 값이 react-hook-form
+    //  에러 원인: Zod 스키마는 postId를 필수로 요구하지만, 화면(JSX)엔 content 입력창만 등록되어 있어 postId가 누락된 채 제출되었습니다.
+    //
+    // 해결 원리: 렌더링 직후 useEffect가 실행되면서 reset({ postId })를 통해 RHF 내부 상태에 postId 값을 강제로 주입합니다.
+    //
+    // 결과: 이 덕분에 데이터가 온전해져서 제출(Submit) 시 RHF가 Zod에게 postId와 content를 모두 정상적으로 전달할 수 있게 됩니다.
+    //
+    // 추가 기능: 부모로부터 새로운 postId가 넘어올 때마다 useEffect가 다시 돌며 RHF 내부의 postId 상태를 최신 값으로 자동 갱신해 줍니다.
 
     useEffect(() => {
         reset({
@@ -43,7 +47,7 @@ function PostReply({ postId }: Props) {
     const onSubmit = async (data: CreateReplyInputType) => {
         try {
             await replyApi.createReply(postId, data.content);
-            reset();       // textarea에 값이 입력되어져 있는 상태이기 때문에 그걸 비우려고
+            reset(); // textarea에 값이 입력되어져 있는 상태이기 때문에 그걸 비우려고
             // TODO : 댓글 목록을 다시 불러와야 함
         } catch (error) {
             console.log("댓글 작성 실패 : ", error);
