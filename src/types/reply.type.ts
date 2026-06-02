@@ -1,0 +1,13 @@
+import type { User } from "./user.type.ts";
+
+export interface Reply {
+    id: number;
+    createdAt: string;
+    updatedAt: string;
+    content: string;
+    userId: number;
+    postId: number;
+    // Generic Type 중 Pick이라는 타입이 존재
+    // Pick<해당 타입,가져올 항목들>
+    user: Pick<User, "id" | "nickname" | "email">
+}

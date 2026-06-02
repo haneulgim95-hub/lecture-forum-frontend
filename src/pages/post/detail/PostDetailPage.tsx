@@ -114,7 +114,7 @@ function PostDetailPage() {
                     )}
                 </AdminButtonGroup>
 
-                <PostReply/>
+                <PostReply postId={post.id}/>
             </DetailWrapper>
         </PostContainer>
     );
