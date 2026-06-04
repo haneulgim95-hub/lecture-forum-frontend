@@ -56,6 +56,8 @@ function PostReply({ postId }: Props) {
                 const result = await replyApi.getRepliesByPostId(postId, page, size);
                 setList(result.list);
                 setTotal(result.total);
+                // setPage(page)는 현재 댓글 데이터가 몇 페이지인지를 state에 기록하는 역할
+                // 클릭한 페이지버튼을 활성화 하기 위해!!
                 setPage(page);
             } catch (error) {
                 console.log(error);
