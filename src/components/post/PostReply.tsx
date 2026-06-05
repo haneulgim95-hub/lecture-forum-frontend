@@ -1,27 +1,17 @@
-import { useForm } from "react-hook-form";
-import {
-    type CreateReplyInputType,
-    createReplySchema,
-} from "../../schemas/reply/createReplySchema.ts";
-import { zodResolver } from "@hookform/resolvers/zod";
 import {
     EmptyMessage,
     ReplyContainer,
-    ReplyContent,
-    ReplyForm,
-    ReplyHeader,
-    ReplyItem,
     ReplyList,
     ReplyTitle,
 } from "./reply.style.tsx";
 import { LuMessageSquare } from "react-icons/lu";
-import TextareaGroup from "../common/textarea/TextareaGroup.tsx";
-import Button from "../common/button/Button.tsx";
 import { useAuthStore } from "../../stores/auth/authStore.ts";
 import replyApi from "../../api/user/replyApi.ts";
 import { useCallback, useEffect, useState } from "react";
 import type { Reply } from "../../types/reply.type.ts";
 import ReplyPagination from "../common/pagination/ReplyPagination.tsx";
+import ReplyForm from "./reply/ReplyForm.tsx";
+import ReplyItem from "./reply/ReplyItem.tsx";
 
 interface Props {
     postId: number;
@@ -74,15 +64,7 @@ function PostReply({ postId }: Props) {
         loadReplies(1).then(() => {});
     }, [loadReplies]);
 
-    const {
-        register,
-        handleSubmit,
-        reset,
-        formState: { errors, isSubmitting },
-    } = useForm<CreateReplyInputType>({
-        resolver: zodResolver(createReplySchema),
-        mode: "onBlur",
-    });
+
 
     //  에러 원인: Zod 스키마는 postId를 필수로 요구하지만, 화면(JSX)엔 content 입력창만 등록되어 있어 postId가 누락된 채 제출되었습니다.
     //
@@ -92,66 +74,17 @@ function PostReply({ postId }: Props) {
     //
     // 추가 기능: 부모로부터 새로운 postId가 넘어올 때마다 useEffect가 다시 돌며 RHF 내부의 postId 상태를 최신 값으로 자동 갱신해 줍니다.
 
-    useEffect(() => {
-        reset({
-            postId,
-        });
-    }, [postId, reset]);
 
-    const onSubmit = async (data: CreateReplyInputType) => {
-        try {
-            await replyApi.createReply(postId, data.content);
-            reset(); // textarea에 값이 입력되어져 있는 상태이기 때문에 그걸 비우려고
-            // 1. 내가 댓글을 작성하면 실행
-            // 2. 글내용을 보면, 이미 댓글 목록도 불러와졌어야 함
-            await loadReplies(1);
-        } catch (error) {
-            console.log("댓글 작성 실패 : ", error);
-            alert("댓글 작성 중 오류가 발생했습니다.");
-        }
-    };
 
-    const handleDeleteReply = async (replyId: number) => {
-        if (!confirm("정말 이 댓글을 삭제 하시겠습니까?")) return;
-
-        try {
-            await replyApi.deleteReply(replyId);
-            await loadReplies(1);
-        } catch (error) {
-            console.log("댓글 삭제 실패: ", error);
-            alert("댓글 삭제 중 오류가 발생되었습니다.");
-        }
-    };
 
     return (
         <ReplyContainer>
             <ReplyTitle>
                 <LuMessageSquare size={28} />
-                댓글 <span className={"count"}>0</span>
+                댓글 <span className={"count"}>{total}</span>
             </ReplyTitle>
-            <ReplyForm onSubmit={handleSubmit(onSubmit)}>
-                <div style={{ flex: 1 }}>
-                    <TextareaGroup
-                        style={{ minHeight: "40px" }}
-                        placeholder={
-                            isLoggedIn
-                                ? "토론에 대한 의견을 남겨주세요"
-                                : "로그인 후 댓글을 작성할 수 있습니다."
-                        }
-                        errorMessage={errors.content?.message}
-                        registerObj={register("content")}
-                        disabled={!isLoggedIn || isSubmitting}
-                    />
-                </div>
-                <Button
-                    disabled={!isLoggedIn || isSubmitting}
-                    style={{ minWidth: "100px" }}
-                    color={isLoggedIn ? "primary" : "secondary"}
-                    variant={"contained"}
-                    type={"submit"}>
-                    {isSubmitting ? "등록 중..." : "댓글 등록"}
-                </Button>
-            </ReplyForm>
+
+            <ReplyForm postId={postId} loadReplies={loadReplies} isLoggedIn={isLoggedIn} />
 
             <ReplyList>
                 {isLoading ? (
@@ -160,30 +93,7 @@ function PostReply({ postId }: Props) {
                     <EmptyMessage>가장 먼저 토론에 참여해보세요!</EmptyMessage>
                 ) : (
                     list.map(item => (
-                        <ReplyItem key={item.id}>
-                            <ReplyHeader>
-                                <div className={"author-info"}>
-                                    <strong>{item.user.nickname}</strong>
-                                    <span className={"date"}>
-                                        {new Date(item.createdAt).toLocaleString("ko-kr", {
-                                            year: "numeric",
-                                            month: "2-digit",
-                                            day: "2-digit",
-                                            hour: "2-digit",
-                                            minute: "2-digit",
-                                        })}
-                                    </span>
-                                </div>
-                                {user?.id === item.userId && (
-                                    <button
-                                        className={"delete-btn"}
-                                        onClick={() => handleDeleteReply(item.id)}>
-                                        삭제
-                                    </button>
-                                )}
-                            </ReplyHeader>
-                            <ReplyContent>{item.content}</ReplyContent>
-                        </ReplyItem>
+                        <ReplyItem key={item.id} item={item} user={user} loadReplies={loadReplies}/>
                     ))
                 )}
             </ReplyList>
