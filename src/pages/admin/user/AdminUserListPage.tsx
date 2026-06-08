@@ -21,6 +21,9 @@ import Pagination from "../../../components/common/pagination/Pagination.tsx";
 
 function AdminUserListPage() {
     const [list, setList] = useState<User[]>([]);
+
+    // 얘는 백엔드와의 통신이 진행 중인지 여부를 나타낸다.
+    // 얘를 통해서 통신 진행 중에는 화면이 출력되지 않도록 제한하기 위해.
     const [loading, setLoading] = useState(true);
 
     const [searchParams, setSearchParams] = useSearchParams();
@@ -29,7 +32,15 @@ function AdminUserListPage() {
     const page = Number(searchParams.get("page")) || 1; // 이것 자체가 state 임
 
     const SIZE = 20; // 한 페이지에 몇개를 보여줄수 있는지
+
+    // 페이지네이션을 할 때 마지막 페이지를 계산하기 위한 목적으로 전체 총 공지사항 갯수가 필요하니
+    // 그것을 백엔드에게 받아서 저장할 목적으로
+    // 초기값 0의 number 타입 total이라는 state를 선언
     const [total, setTotal] = useState(0);
+
+    // 실제 페이지네이션에 출력되는 버튼은 "공지사항 갯수"로 출력하는게 아니라
+    // 총 "페이지 매수"로 출력하니깐 여러군데서 이에 대해 사용될것 같으니 한번에 계산을 시키고
+    //totalPage만 불러다가 쓰겠구나
     const totalPage = Math.ceil(total / SIZE); // Math.ceil() : 올림 메서드
 
     const loadUsers = async (page: number) => {
@@ -65,6 +76,8 @@ function AdminUserListPage() {
         // 의존성 배열에 넣은 변수나 함수나 메서드나 state가 바뀔 때 재실행됨
     }, [page]);
 
+
+    // handler (핸들러) : 무언가 동작을 실행시키는 함수
     const handleDelete = async (id: number) => {
         // confirm은 사용자에게 경고창을 통해 확인을 받는 메서드. true/false가 반환됨
         // 그렇게 취소를 하면 더 이상 함수 진행을 안함

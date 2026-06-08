@@ -125,7 +125,7 @@ async function runSeeder() {
         return;
     }
 
-    const postsPerCategory = 20;ㅕㅑ
+    const postsPerCategory = 20;
 
     // 향상된 for문 중 forof (array에서만 사용 가능)
     // for (const 함수몸통에서 이용할변수 of for의대상) {

@@ -9,7 +9,8 @@
         "lint": "eslint .",
         "preview": "vite preview",
         "seed:user": "node seed/user.js",
-        "seed:post": "node seed/post.js"
+        "seed:post": "node seed/post.js",
+        "seed:notice": "node seed/notice.js"
     },
     "dependencies": {
         "@hookform/resolvers": "^5.2.2",

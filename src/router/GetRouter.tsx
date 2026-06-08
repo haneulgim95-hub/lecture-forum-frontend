@@ -15,6 +15,9 @@ import AdminUserUpdatePage from "../pages/admin/user/update/AdminUserUpdatePage.
 import PostListPage from "../pages/post/PostListPage.tsx";
 import PostCreatePage from "../pages/post/create/PostCreatePage.tsx";
 import PostDetailPage from "../pages/post/detail/PostDetailPage.tsx";
+import AdminNoticeCreatePage from "../pages/admin/notice/create/AdminNoticeCreatePage.tsx";
+import AdminNoticeUpdatePage from "../pages/admin/notice/update/AdminNoticeUpdatePage.tsx";
+import AdminNoticeList from "../pages/admin/notice/AdminNoticeList.tsx";
 
 // 회원의 권한에 따라 접근할 수 있는 주소를 판별하기 위해서
 // react-router 라이브러리에서는 "로더(loader)"라는 기능을 제공함
@@ -74,7 +77,7 @@ const router = createBrowserRouter([
             {
                 path: "post",
                 children: [
-                    { path: ":id", element: <PostDetailPage/>},
+                    { path: ":id", element: <PostDetailPage /> },
                     { path: "create/:categoryId", loader: userLoader, element: <PostCreatePage /> },
                 ],
             },
@@ -111,6 +114,14 @@ const router = createBrowserRouter([
                     { index: true, element: <AdminUserListPage /> },
                     { path: "create", element: <AdminUserCreatePage /> },
                     { path: ":id", element: <AdminUserUpdatePage /> },
+                ],
+            },
+            {
+                path: "notice",
+                children: [
+                    { index: true, element: <AdminNoticeList /> },
+                    { path: "create", element: <AdminNoticeCreatePage /> },
+                    { path: ":id", element: <AdminNoticeUpdatePage/>},
                 ],
             },
         ],

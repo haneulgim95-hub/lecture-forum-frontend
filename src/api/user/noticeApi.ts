@@ -3,7 +3,7 @@ import type { PaginationResponseType } from "../../types/common.type.ts";
 import axiosInstance from "../axiosInstance.ts";
 
 const getNoticeById = async (noticeId: number): Promise<Notice> => {
-    const response = await axiosInstance.get(`/notices/${noticeId}`);
+    const response = await axiosInstance.get(`/notice/${noticeId}`);
     return response.data.data;
 };
 
