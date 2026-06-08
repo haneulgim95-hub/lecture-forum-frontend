@@ -18,8 +18,9 @@ import { AuthRootErrorMessage } from "../../../../components/auth/auth.style.tsx
 import Button from "../../../../components/common/button/Button.tsx";
 import { useEffect, useState } from "react";
 import noticeApi from "../../../../api/user/noticeApi.ts";
+import TextareaGroup from "../../../../components/common/textarea/TextareaGroup.tsx";
 
-function AdminNoticeUpdatePage() {
+function AdminNoticeEditPage_Mine() {
     const {id} = useParams<{id: string}>();
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
@@ -64,7 +65,7 @@ function AdminNoticeUpdatePage() {
         try {
             await adminNoticeApi.updateNotice(Number(id), data);
             alert("공지사항 업데이트가 완료 되었습니다.");
-            navigate("/admin/notice");
+            navigate(-1);
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 setError("root", { message: error.response?.data?.message });
@@ -89,7 +90,7 @@ function AdminNoticeUpdatePage() {
                             errorMessage={errors.title?.message}
                             registerObj={register("title")}
                         />
-                        <InputGroup
+                        <TextareaGroup
                             label={"본문(내용)"}
                             id={"content"}
                             errorMessage={errors.content?.message}
@@ -104,7 +105,7 @@ function AdminNoticeUpdatePage() {
                                     color={"secondary"}
                                     variant={"text"}
                                     as={Link}
-                                    to={"/admin/notice"}>
+                                    onClick={() => navigate(-1)}>
                                     취소
                                 </Button>
                                 <Button
@@ -123,4 +124,4 @@ function AdminNoticeUpdatePage() {
     );
 }
 
-export default AdminNoticeUpdatePage;
+export default AdminNoticeEditPage_Mine;

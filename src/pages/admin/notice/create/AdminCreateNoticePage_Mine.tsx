@@ -17,7 +17,7 @@ import TextareaGroup from "../../../../components/common/textarea/TextareaGroup.
 import adminNoticeApi from "../../../../api/admin/adminNoticeApi.ts";
 import axios from "axios";
 
-function AdminNoticeCreatePage() {
+function AdminCreateNoticePage_Mine() {
     const navigate = useNavigate();
     const {
         register,
@@ -94,4 +94,4 @@ function AdminNoticeCreatePage() {
     );
 }
 
-export default AdminNoticeCreatePage;
+export default AdminCreateNoticePage_Mine;
