@@ -1,9 +1,9 @@
+import {useNavigate, useParams } from "react-router";
 import { useForm } from "react-hook-form";
 import { type NoticeInputType, noticeSchema } from "../../../../schemas/notice/noticeSchema.ts";
 import { zodResolver } from "@hookform/resolvers/zod";
-import adminNoticeApi from "../../../../api/admin/adminNoticeApi.ts";
-import { Link, useNavigate, useParams } from "react-router";
-import axios from "axios";
+import { useEffect, useState } from "react";
+import noticeApi from "../../../../api/user/noticeApi.ts";
 import {
     AdminButtonGroup,
     AdminContainer,
@@ -12,16 +12,16 @@ import {
     AdminPageHeader,
     AdminTitle,
 } from "../../../../components/admin/admin.style.tsx";
-import Card from "../../../../components/common/card/Card.tsx";
 import InputGroup from "../../../../components/common/input/InputGroup.tsx";
-import { AuthRootErrorMessage } from "../../../../components/auth/auth.style.tsx";
-import Button from "../../../../components/common/button/Button.tsx";
-import { useEffect, useState } from "react";
-import noticeApi from "../../../../api/user/noticeApi.ts";
 import TextareaGroup from "../../../../components/common/textarea/TextareaGroup.tsx";
+import {AuthRootErrorMessage} from "../../../../components/auth/auth.style.tsx";
+import Button from "../../../../components/common/button/Button.tsx";
+import Card from "../../../../components/common/card/Card.tsx";
+import adminNoticeApi from "../../../../api/admin/adminNoticeApi.ts";
+import axios from "axios";
 
-function AdminNoticeEditPage_Mine() {
-    const {id} = useParams<{id: string}>();
+function AdminNoticeUpdatePage() {
+    const { id } = useParams<{ id: string }>();
     const [isLoading, setIsLoading] = useState(true);
     const navigate = useNavigate();
 
@@ -29,7 +29,8 @@ function AdminNoticeEditPage_Mine() {
         register,
         handleSubmit,
         setError,
-        reset,
+        reset,  // react-hook-form이 관리하고 있는 state 값을 리셋하겠다.
+        // setValues,  // react-hook-form이 관리하고 있는 state 값을 정하겠다.  => 둘 중 하나 선택 가능!
         formState: { errors, isSubmitting },
     } = useForm<NoticeInputType>({
         resolver: zodResolver(noticeSchema),
@@ -40,15 +41,15 @@ function AdminNoticeEditPage_Mine() {
         const loadNotice = async () => {
             if (!id) return;
             try {
-                const result = await noticeApi.getNoticeById(Number(id));
+                const data = await noticeApi.getNoticeById(Number(id));
 
                 reset({
-                    title: result.title,
-                    content: result.content,
+                    title: data.title,
+                    content: data.content,
                 });
             } catch (error) {
                 console.log(error);
-                alert("공지사항을 불러오는 도중 오류가 발생했습니다.");
+                alert("존재하지 않거나 삭제된 공지사항입니다.");
                 navigate("/admin/notice");
             } finally {
                 setIsLoading(false);
@@ -57,11 +58,11 @@ function AdminNoticeEditPage_Mine() {
         loadNotice().then(() => {});
     }, [id, navigate, reset]);
 
-    const onSubmit = async (data: NoticeInputType) => {
+    const execUpdate = async (data: NoticeInputType) => {
         try {
             await adminNoticeApi.updateNotice(Number(id), data);
             alert("공지사항 업데이트가 완료 되었습니다.");
-            navigate(-1);
+            navigate(`/admin/notice/${id}`);
         } catch (error) {
             if (axios.isAxiosError(error)) {
                 setError("root", { message: error.response?.data?.message });
@@ -73,13 +74,14 @@ function AdminNoticeEditPage_Mine() {
     return (
         <AdminContainer>
             <AdminPageHeader>
-                <AdminTitle>공지사항 정보 변경</AdminTitle>
+                <AdminTitle>공지사항 수정</AdminTitle>
             </AdminPageHeader>
+
             <Card>
                 {isLoading ? (
                     <AdminLoadingText>데이터를 불러오는 중...</AdminLoadingText>
                 ) : (
-                    <AdminForm onSubmit={handleSubmit(onSubmit)} >
+                    <AdminForm onSubmit={handleSubmit(execUpdate)}>
                         <InputGroup
                             label={"제목"}
                             id={"title"}
@@ -96,11 +98,10 @@ function AdminNoticeEditPage_Mine() {
                             {errors.root && (
                                 <AuthRootErrorMessage>{errors.root.message}</AuthRootErrorMessage>
                             )}
-                            <AdminButtonGroup>
+                            <AdminButtonGroup >
                                 <Button
                                     color={"secondary"}
                                     variant={"text"}
-                                    as={Link}
                                     onClick={() => navigate(-1)}>
                                     취소
                                 </Button>
@@ -109,7 +110,7 @@ function AdminNoticeEditPage_Mine() {
                                     color={"primary"}
                                     variant={"contained"}
                                     disabled={isSubmitting}>
-                                    등록
+                                    { isSubmitting ? "저장 중" : "수정"}
                                 </Button>
                             </AdminButtonGroup>
                         </div>
@@ -120,4 +121,4 @@ function AdminNoticeEditPage_Mine() {
     );
 }
 
-export default AdminNoticeEditPage_Mine;
+export default AdminNoticeUpdatePage;
