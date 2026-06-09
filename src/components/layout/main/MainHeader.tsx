@@ -44,7 +44,7 @@ const Nav = styled.nav`
     display: flex;
     align-items: center;
     gap: 40px;
-    flex: 1;    
+    flex: 1;
 `;
 
 const NavItem = styled(Link)`
@@ -52,7 +52,7 @@ const NavItem = styled(Link)`
     font-weight: 600;
     color: ${props => props.theme.colors.text.default};
     transition: all 0.3s;
-    
+
     &:hover {
         color: ${props => props.theme.colors.primary};
     }
@@ -80,7 +80,7 @@ function MainHeader() {
             }
         };
 
-        loadList().then(() =>{});
+        loadList().then(() => {});
     }, []);
 
     return (
@@ -100,6 +100,9 @@ function MainHeader() {
                 </Nav>
 
                 <NavGroup>
+                    <Button color={"primary"} variant={"text"} as={Link} to={"/notice"}>
+                        공지사항
+                    </Button>
                     <Button color={"primary"} variant={"icon"} onClick={onChangeTheme}>
                         {theme === "light" ? <IoSunny size={20} /> : <IoMoon size={20} />}
                     </Button>
