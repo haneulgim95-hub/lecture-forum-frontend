@@ -3,7 +3,6 @@ import type { Inquiry } from "../../../types/inquiry.type.ts";
 import { Link, useSearchParams } from "react-router";
 import adminInquiryApi from "../../../api/admin/adminInquiryApi.ts";
 import {
-    AdminButtonGroup,
     AdminContainer,
     AdminLoadingText,
     AdminPageHeader,
@@ -65,9 +64,9 @@ function AdminInquiryListPage() {
                             <thead>
                                 <AdminTh $width={"10%"}>ID</AdminTh>
                                 <AdminTh>제목</AdminTh>
-                                <AdminTh $width={"20%"}>작성일</AdminTh>
-                                <AdminTh $width={"10%"}>작성자</AdminTh>
-                                <AdminTh $width={"10%"}>상태</AdminTh>
+                                <AdminTh $width={"15%"}>작성일</AdminTh>
+                                <AdminTh $width={"15%"}>작성자</AdminTh>
+                                <AdminTh $width={"15%"}>상태</AdminTh>
                             </thead>
                             <tbody>
                                 {list.length === 0 && (
@@ -99,7 +98,7 @@ function AdminInquiryListPage() {
                                         </AdminTd>
                                         <AdminTd>
                                             <Badge color={item.answer ? "success" : "default"}>
-                                                {item.answer ? "답변" : "미답변"}
+                                                {item.answer ? "답변완료" : "답변대기"}
                                             </Badge>
                                         </AdminTd>
                                     </tr>

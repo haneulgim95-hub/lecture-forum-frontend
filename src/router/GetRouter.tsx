@@ -25,6 +25,9 @@ import AdminInquiryListPage from "../pages/admin/inquiry/AdminInquiryListPage.ts
 import MyLayout from "../layouts/MyLayout.tsx";
 import MyInfoPage from "../pages/my/info/MyInfoPage.tsx";
 import MyInquiryListPage from "../pages/my/Inquiry/MyInquiryListPage.tsx";
+import MyInquiryDetailPage from "../pages/my/Inquiry/detail/MyInquiryDetailPage.tsx";
+import MyInquiryCreatePage from "../pages/my/Inquiry/create/MyInquiryCreatePage.tsx";
+import MyInquiryEditPage from "../pages/my/Inquiry/edit/MyInquiryEditPage.tsx";
 
 // 회원의 권한에 따라 접근할 수 있는 주소를 판별하기 위해서
 // react-router 라이브러리에서는 "로더(loader)"라는 기능을 제공함
@@ -105,10 +108,19 @@ const router = createBrowserRouter([
             },
             {
                 path: "my",
+                loader: userLoader,
                 element: <MyLayout />,
                 children: [
                     { index: true, element: <MyInfoPage /> },
-                    { path: "inquiry", element: <MyInquiryListPage /> },
+                    {
+                        path: "inquiry",
+                        children: [
+                            { index: true, element: <MyInquiryListPage /> },
+                            { path: "create", element: <MyInquiryCreatePage /> },
+                            { path: ":id", element: <MyInquiryDetailPage/>},
+                            { path: "edit/:id", element: <MyInquiryEditPage/>},
+                        ],
+                    },
                 ],
             },
         ],

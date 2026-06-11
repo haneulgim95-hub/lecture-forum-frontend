@@ -19,6 +19,7 @@ export default MyLayout;
 
 const MyLayoutContainer = styled.div`
     display: flex;
+    gap: 30px;
     min-height: calc(100dvh - 64px - 50px);
     background-color: ${props => props.theme.colors.background.default};
 `;
@@ -27,5 +28,4 @@ const ContentArea = styled.div`
     flex: 1;
     display: flex;
     flex-direction: column;
-    padding: 40px;
 `;
