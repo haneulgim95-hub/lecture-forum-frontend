@@ -11,10 +11,10 @@ import adminInquiryApi from "../../api/admin/adminInquiryApi.ts";
 
 interface Props {
     inquiryId: number;
-    onSuccess: () => Promise<void>;
+    reload: () => Promise<void>;
 }
 
-function AdminInquiryAnswerForm({ inquiryId, onSuccess }: Props) {
+function AdminInquiryAnswerForm({ inquiryId, reload }: Props) {
     const {
         register,
         handleSubmit,
@@ -28,7 +28,7 @@ function AdminInquiryAnswerForm({ inquiryId, onSuccess }: Props) {
         try {
             await adminInquiryApi.updateInquiryAnswer(inquiryId, input);
             alert("답변을 성공적으로 등록했습니다.");
-            await onSuccess();
+            await reload();
         } catch (error) {
             console.log(error);
             alert("답변을 등록하는데 실패했습니다.");

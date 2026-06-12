@@ -86,3 +86,38 @@ export const AnswerSection = styled.div`
         vertical-align: middle;
     }
 `;
+
+export const AnswerDisplay =styled.div`
+    display: flex;
+    flex-direction: column;
+    
+    .answer-content {
+    padding-top: 16px
+`;
+
+export const AnswerHeader = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    border-bottom: 1px solid ${props => props.theme.colors.divider};
+    padding-bottom: 16px;
+    
+    h4 {
+        font-size: 18px;
+        color: ${props => props.theme.colors.primary};
+        font-weight: 700;
+    }
+    
+    small {
+        color: ${props => props.theme.colors.secondary};
+        font-size: 14px;
+    }
+`;
+
+export const AnswerContent = styled.div`
+    padding: 32px 0;
+    line-height: 1.8;
+    white-space: pre-wrap;
+    word-break: break-all;
+`;
+
