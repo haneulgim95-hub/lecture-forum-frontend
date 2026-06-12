@@ -11,8 +11,9 @@ import {
     PostContainer,
 } from "../../../../components/post/post.style.tsx";
 import inquiryApi from "../../../../api/user/inquiryApi.ts";
-import { AdminButtonGroup } from "../../../../components/admin/admin.style.tsx";
+import { AdminButtonGroup, AnswerHeader } from "../../../../components/admin/admin.style.tsx";
 import Button from "../../../../components/common/button/Button.tsx";
+import { AnswerBox } from "../../../../components/inquiry/inquiry.style.ts";
 
 function MyInquiryDetailPage() {
     const { id } = useParams<{ id: string }>();
@@ -43,7 +44,7 @@ function MyInquiryDetailPage() {
             navigate("/my/inquiry");
         } catch (error) {
             console.log(error);
-            alert("문의글 삭제를 진행 중 오류가 발생했습니다.")
+            alert("문의글 삭제를 진행 중 오류가 발생했습니다.");
         }
     };
 
@@ -79,8 +80,24 @@ function MyInquiryDetailPage() {
 
                 <DetailContent>{inquiry.content}</DetailContent>
 
+                {inquiry.answer && (
+                    <AnswerBox>
+                        <AnswerHeader>
+                            <span className={"admin-label"}>관리자 답변</span>
+                            <span className={"answer-date"}>
+                                {inquiry.answeredAt &&
+                                    new Date(inquiry.answeredAt).toLocaleString()}
+                            </span>
+                        </AnswerHeader>
+                        <DetailContent className={"answer-content"}>{inquiry.answer}</DetailContent>
+                    </AnswerBox>
+                )}
+
                 <AdminButtonGroup style={{ marginTop: "40px" }}>
-                    <Button color={"secondary"} variant={"contained"} onClick={() => navigate("/my/inquiry")}>
+                    <Button
+                        color={"secondary"}
+                        variant={"contained"}
+                        onClick={() => navigate("/my/inquiry")}>
                         목록으로
                     </Button>
                     {!inquiry.answer && (

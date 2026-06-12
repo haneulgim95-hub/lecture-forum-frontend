@@ -1,4 +1,4 @@
-import { Link, useNavigate, useParams } from "react-router";
+import { useNavigate, useParams } from "react-router";
 import { useCallback, useEffect, useState } from "react";
 import type { Inquiry } from "../../../../types/inquiry.type.ts";
 import adminInquiryApi from "../../../../api/admin/adminInquiryApi.ts";
