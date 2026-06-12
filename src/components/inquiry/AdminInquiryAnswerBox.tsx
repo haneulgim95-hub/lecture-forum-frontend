@@ -2,13 +2,15 @@ import type { Inquiry } from "../../types/inquiry.type.ts";
 import { AdminButtonGroup, AnswerContent, AnswerDisplay, AnswerHeader } from "../admin/admin.style.tsx";
 import Button from "../common/button/Button.tsx";
 import adminInquiryApi from "../../api/admin/adminInquiryApi.ts";
+import type { Dispatch, SetStateAction } from "react";
 
 interface Props {
     inquiry: Inquiry;
     reload: () => Promise<void>;
+    setIsEdit: Dispatch<SetStateAction<boolean>>;
 }
 
-function AdminInquiryAnswerBox({ inquiry, reload }: Props) {
+function AdminInquiryAnswerBox({ inquiry, reload, setIsEdit }: Props) {
     const handleDeleteAnswer = async () => {
         try {
             await adminInquiryApi.deleteInquiryAnswer(inquiry.id);
@@ -32,8 +34,12 @@ function AdminInquiryAnswerBox({ inquiry, reload }: Props) {
             <AnswerContent className={"answer-content"}>{inquiry.answer}</AnswerContent>
 
             <AdminButtonGroup>
-                <Button variant={"contained"} color={"warning"}>답변 수정</Button>
-                <Button variant={"contained"} color={"error"} onClick={handleDeleteAnswer}>답변 삭제</Button>
+                <Button variant={"contained"} color={"warning"} onClick={() => setIsEdit(true)}>
+                    답변 수정
+                </Button>
+                <Button variant={"contained"} color={"error"} onClick={handleDeleteAnswer}>
+                    답변 삭제
+                </Button>
             </AdminButtonGroup>
         </AnswerDisplay>
     );

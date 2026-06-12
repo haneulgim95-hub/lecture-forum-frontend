@@ -25,6 +25,7 @@ function AdminInquiryDetailPage() {
     const inquiryId = Number(id);
     const [inquiry, setInquiry] = useState<Inquiry | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
+    const [isEdit, setIsEdit] = useState(false);
 
     // useCallback() : React에서 제공하는 기능
     // loadInquiry는 useEffect 안에 있을 때는 계속 새로운 애가 생성되는건데
@@ -94,10 +95,10 @@ function AdminInquiryDetailPage() {
                 {/* 만약에, 답변이 아직 달리지 않았다면 Textarea를 띄어서 답변을 달 수 있도록 할 것이고
                 답변이 이미 달렸다면 답변 내용이 출력 될 수 있도록 함 */}
                 <AnswerSection>
-                    {inquiry.answer ? (
-                        <AdminInquiryAnswerBox inquiry={inquiry} reload={loadInquiry} />
+                    {inquiry.answer && !isEdit? (
+                        <AdminInquiryAnswerBox inquiry={inquiry} reload={loadInquiry} setIsEdit={setIsEdit}/>
                     ) : (
-                        <AdminInquiryAnswerForm reload={loadInquiry} inquiryId={inquiryId} />
+                        <AdminInquiryAnswerForm reload={loadInquiry} inquiry={inquiry} isEdit={isEdit} setIsEdit={setIsEdit}/>
                     )}
                 </AnswerSection>
 
@@ -107,16 +108,6 @@ function AdminInquiryDetailPage() {
                         variant={"contained"}
                         onClick={() => navigate("/admin/inquiry")}>
                         목록으로
-                    </Button>
-                    <Button
-                        color={"warning"}
-                        variant={"contained"}
-                        as={Link}
-                        to={`/admin/inquiry/update/${inquiry.id}`}>
-                        수정
-                    </Button>
-                    <Button color={"error"} variant={"contained"}>
-                        삭제
                     </Button>
                 </AdminButtonGroup>
             </DetailWrapper>
