@@ -23,8 +23,12 @@ const updateInquiryAnswer = async (inquiryId: number, input: InquiryAnswerInputT
     return response.data.data;
 };
 
+const deleteInquiryAnswer = async (inquiryId: number): Promise<void> => {
+    await axiosInstance.delete(`/admin/inquiry/${inquiryId}`);
+};
+
 const deleteInquiry = async (id: number): Promise<void> => {
     await axiosInstance.delete(`/admin/inquiry/${id}`);
 };
 
-export default { fetchInquiryList, fetchInquiryById, updateInquiryAnswer, deleteInquiry };
+export default { fetchInquiryList, fetchInquiryById, updateInquiryAnswer, deleteInquiryAnswer, deleteInquiry };

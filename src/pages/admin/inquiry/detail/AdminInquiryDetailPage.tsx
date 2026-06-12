@@ -69,7 +69,7 @@ function AdminInquiryDetailPage() {
                 {/* 만약에, 답변이 아직 달리지 않았다면 Textarea를 띄어서 답변을 달 수 있도록 할 것이고
                 답변이 이미 달렸다면 답변 내용이 출력 될 수 있도록 함 */}
                 <AnswerSection>
-                    { inquiry.answer ? (<AdminInquiryAnswerBox inquiry={inquiry}/>) : (<AdminInquiryAnswerForm onSuccess={loadInquiry} inquiryId={inquiryId}/>)}
+                    { inquiry.answer ? (<AdminInquiryAnswerBox inquiry={inquiry} onSuccess={loadInquiry}/>) : (<AdminInquiryAnswerForm onSuccess={loadInquiry} inquiryId={inquiryId}/>)}
                 </AnswerSection>
 
                 <AdminButtonGroup style={{ marginTop: "40px" }}>
