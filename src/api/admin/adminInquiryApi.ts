@@ -12,4 +12,13 @@ const fetchInquiryList = async (page: number, size: number): Promise<PaginationR
     return response.data.data;
 };
 
-export default { fetchInquiryList };
+const fetchInquiryById = async (id: number): Promise<Inquiry> => {
+    const response = await axiosInstance.get(`/admin/inquiry/${id}`);
+    return response.data.data;
+};
+
+const deleteInquiry = async (id: number): Promise<void> => {
+    await axiosInstance.delete(`/admin/inquiry/${id}`);
+};
+
+export default { fetchInquiryList, fetchInquiryById, deleteInquiry };

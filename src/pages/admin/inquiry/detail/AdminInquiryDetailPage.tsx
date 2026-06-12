@@ -1,0 +1,86 @@
+import {Link, useNavigate, useParams } from "react-router";
+import {useEffect, useState} from "react";
+import type {Inquiry} from "../../../../types/inquiry.type.ts";
+import adminInquiryApi from "../../../../api/admin/adminInquiryApi.ts";
+import {AdminButtonGroup, AdminContainer} from "../../../../components/admin/admin.style.tsx";
+import {DetailContent, DetailHeader, DetailInfo, DetailTitle, DetailWrapper, LoadingText} from "../../../../components/post/post.style.tsx";
+import Button from "../../../../components/common/button/Button.tsx";
+
+function AdminInquiryDetailPage() {
+    const navigate = useNavigate();
+    const { id } = useParams<{id: string}>();
+    const inquiryId = Number(id);
+    const [inquiry, setInquiry] = useState<Inquiry | null>(null);
+    const [isLoading, setIsLoading] = useState<boolean>(true);
+
+    useEffect(() => {
+        const loadInquiry = async () => {
+            try {
+                const data = await adminInquiryApi.fetchInquiryById(inquiryId);
+                setInquiry(data);
+            } catch (error) {
+                console.log(error);
+                alert("문의글 상세를 조회하는데 실패했습니다.");
+                navigate("/admin/inquiry");
+            } finally {
+                setIsLoading(false);
+            }
+        };
+        loadInquiry().then(() => {});
+    }, [inquiryId, navigate]);
+
+    if (isLoading) {
+        return (
+            <AdminContainer>
+                <LoadingText>문의글 내용을 불러오는 중입니다.</LoadingText>
+            </AdminContainer>
+        );
+    }
+
+    if (!inquiry) return;
+
+    return (
+        <AdminContainer>
+            <DetailWrapper>
+                <DetailHeader>
+                    <DetailTitle>{inquiry.title}</DetailTitle>
+                    <DetailInfo>
+                        <div className={"left-info"}>
+                            <span>{inquiry.user.nickname}</span>
+                            <span>
+                                {new Date(inquiry.createdAt).toLocaleString("ko-kr", {
+                                    year: "numeric",
+                                    month: "2-digit",
+                                    day: "2-digit",
+                                })}
+                            </span>
+                        </div>
+                    </DetailInfo>
+                </DetailHeader>
+
+                <DetailContent>{inquiry.content}</DetailContent>
+
+                <AdminButtonGroup style={{ marginTop: "40px" }}>
+                    <Button
+                        color={"secondary"}
+                        variant={"contained"}
+                        onClick={() => navigate("/admin/inquiry")}>
+                        목록으로
+                    </Button>
+                    <Button
+                        color={"warning"}
+                        variant={"contained"}
+                        as={Link}
+                        to={`/admin/inquiry/update/${inquiry.id}`}>
+                        수정
+                    </Button>
+                    <Button color={"error"} variant={"contained"} >
+                        삭제
+                    </Button>
+                </AdminButtonGroup>
+            </DetailWrapper>
+        </AdminContainer>
+    );
+}
+
+export default AdminInquiryDetailPage;

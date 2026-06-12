@@ -80,7 +80,7 @@ function MyInquiryDetailPage() {
                 <DetailContent>{inquiry.content}</DetailContent>
 
                 <AdminButtonGroup style={{ marginTop: "40px" }}>
-                    <Button color={"secondary"} variant={"contained"} onClick={() => navigate(-1)}>
+                    <Button color={"secondary"} variant={"contained"} onClick={() => navigate("/my/inquiry")}>
                         목록으로
                     </Button>
                     {!inquiry.answer && (
