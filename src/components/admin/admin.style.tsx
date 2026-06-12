@@ -55,10 +55,10 @@ export const AdminTd = styled.td`
     vertical-align: middle;
 `;
 
-export const AdminForm = styled.form<{$wrap?: boolean}>`
+export const AdminForm = styled.form<{ $wrap?: boolean }>`
     display: flex;
-    flex-direction: ${props=> props.$wrap? "row": "column"};
-    flex-wrap: ${props => props.$wrap ? "wrap" : "nowrap"};
+    flex-direction: ${props => (props.$wrap ? "row" : "column")};
+    flex-wrap: ${props => (props.$wrap ? "wrap" : "nowrap")};
     gap: 32px;
 `;
 
@@ -73,4 +73,16 @@ export const AdminButtonGroup = styled.div<{ $align?: "left" | "right" | "center
     display: flex;
     gap: 12px;
     align-items: center;
+`;
+
+export const AnswerSection = styled.div`
+    margin-top: 32px;
+    padding: 24px;
+    background-color: ${props => props.theme.colors.background.default};
+    border-radius: 8px;
+
+    .status-badge {
+        margin-right: 12px;
+        vertical-align: middle;
+    }
 `;
