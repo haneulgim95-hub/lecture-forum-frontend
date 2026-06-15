@@ -54,6 +54,7 @@ function MyPasswordPage() {
             <Card>
                 <FormWrapper onSubmit={handleSubmit(onSubmit)}>
                     <InputGroup
+                        type={"password"}
                         label={"현재 비밀번호"}
                         id={"prevPassword"}
                         placeholder={"현재 비밀번호을 입력하세요"}
@@ -61,6 +62,7 @@ function MyPasswordPage() {
                         registerObj={register("prevPassword")}
                     />
                     <InputGroup
+                        type={"password"}
                         label={"변경할 비밀번호"}
                         id={"password"}
                         placeholder={"변경할 비밀번호를 입력하세요"}
@@ -68,6 +70,7 @@ function MyPasswordPage() {
                         registerObj={register("password")}
                     />
                     <InputGroup
+                        type={"password"}
                         label={"변경할 비밀번호 확인"}
                         id={"confirmPassword"}
                         placeholder={"변경할 비밀번호를 다시 한 번 입력해주세요."}
