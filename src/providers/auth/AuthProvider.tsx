@@ -59,6 +59,8 @@ function AuthProvider({ children }: Props) {
 
     return <>{children}</>;
     // 화면이 하얀 상태에서 useEffect가 발동하고 로그아웃 처리 된 뒤에 화면이 그려지면 사용자는 그냥 받아들임
+    // 따라서 isInitialized state를 만들어서 사용한다
+    // 이유: 토큰 검증이 끝나기 전에 만료된 회원의 페이지가 화면에 잠깐 떴다가 사라지는 깜빡임 버그를 방지하기 위해 사용합니다.
 }
 
 export default AuthProvider;
