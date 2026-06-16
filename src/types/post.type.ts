@@ -1,4 +1,5 @@
 import type { User } from "./user.type.ts";
+import type { Category } from "./category.type.ts";
 
 export interface Post {
     id: number;
@@ -12,7 +13,7 @@ export interface Post {
     categoryId: number;
     // Generic Type 중 Pick이라는 타입이 존재
     // Pick<해당 타입,가져올 항목들>
-    user: Pick<User, "id" | "nickname" | "email">
+    user: Pick<User, "id" | "nickname" | "email">;
     option1Text: string | null;
     option2Text: string | null;
 
@@ -25,4 +26,11 @@ export interface Post {
         totalCount: number;
         hasVoted: boolean;
     } | null;
+
+    // 첫 페이지에서만 있고 글 목록 + 상세에는 없는 항목
+    // category?: Pick<Category, "id" | "name">;
+}
+
+export interface RecentPost extends Post{
+    category: Pick<Category, "id" | "name">
 }

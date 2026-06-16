@@ -7,11 +7,12 @@ export const AdminContainer = styled.div`
     width: 100%;
 `;
 
-export const AdminPageHeader = styled.div`
+export const AdminPageHeader = styled.div<{$marginBottom?: string}>`
     display: flex;
     justify-content: space-between;
     align-items: center;
-    margin-bottom: 8px;
+    margin-bottom: ${({$marginBottom = "8px"}) => $marginBottom};
+    
 `;
 
 export const AdminTitle = styled.h2`
@@ -33,6 +34,15 @@ export const AdminTableWrapper = styled.div`
 export const AdminTable = styled.table`
     width: 100%;
     border-collapse: collapse;
+
+    tbody tr {
+        transition: all 0.2s;
+        cursor: pointer;
+
+        &:hover {
+            background-color: ${props => props.theme.colors.background.default};
+        }
+    }
 `;
 
 export const AdminTh = styled.th<{ $width?: string }>`

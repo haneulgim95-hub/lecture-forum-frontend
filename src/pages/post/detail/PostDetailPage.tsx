@@ -99,7 +99,7 @@ function PostDetailPage() {
                 <PostVote post={post} loadPost={loadPost}/>
 
                 <AdminButtonGroup style={{marginTop: "40px"}}>
-                    <Button color={"secondary"} variant={"contained"} onClick={() => navigate(-1)}>
+                    <Button color={"secondary"} variant={"contained"} onClick={() => navigate(`/category/${post.categoryId}`)}>
                         목록으로
                     </Button>
                     {user?.id === post.user.id && (
