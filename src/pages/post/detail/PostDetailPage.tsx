@@ -67,7 +67,7 @@ function PostDetailPage() {
 
     if (!post) return;
 
-
+    console.log(post.views);
     return (
         <PostContainer>
             <DetailWrapper>
