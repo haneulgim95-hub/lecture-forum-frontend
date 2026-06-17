@@ -1,5 +1,4 @@
 import { useEffect, useState } from "react";
-import type { DashboardSummary } from "../../types/dashboard.type.ts";
 import adminDashboardApi from "../../api/admin/adminDashboardApi.ts";
 import {
     AdminContainer,
@@ -14,10 +13,17 @@ import { LoadingText } from "../../components/post/post.style.tsx";
 import Card from "../../components/common/card/Card.tsx";
 import Badge from "../../components/common/badge/Badge.tsx";
 import { useNavigate } from "react-router";
+import type {User} from "../../types/user.type.ts";
+import type {Post} from "../../types/post.type.ts";
+import type {Inquiry} from "../../types/inquiry.type.ts";
 
 function AdminDashboardPage() {
     const navigate = useNavigate();
-    const [summary, setSummary] = useState<DashboardSummary | null>(null);
+    const [summary, setSummary] = useState<{
+        users: User[],
+        posts: Post[],
+        inquiries: Inquiry[],
+    } | null>(null);
     const [isLoading, setIsLoading] = useState<boolean>(true);
 
     useEffect(() => {
