@@ -131,3 +131,9 @@ export const AnswerContent = styled.div`
     word-break: break-all;
 `;
 
+export const AdminDashboardWrapper = styled.div`
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+`
+
