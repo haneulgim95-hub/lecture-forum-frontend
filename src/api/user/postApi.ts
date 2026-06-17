@@ -18,5 +18,14 @@ const createPost = async  (data: CreatePostInputType): Promise<Post> => {
     return result.data.data;
 };
 
+const createVote = async (postId: number, option: number): Promise<void> => {
+    await axiosInstance.post(`/post/${postId}/vote`, {
+        option,
+    })
+};
 
-export default {fetchPostListByCategory, createPost, fetchPostById};
+const cancelVotePost = async (postId: number): Promise<void> => {
+    await axiosInstance.delete(`/post/${postId}/vote`);
+};
+
+export default { fetchPostListByCategory, createPost, fetchPostById, createVote, cancelVotePost };

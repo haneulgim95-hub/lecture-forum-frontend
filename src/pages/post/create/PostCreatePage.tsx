@@ -93,7 +93,7 @@ function PostCreatePage() {
                     실시간 대난투 투표 설정 <small>(선택사항)</small>
                 </VoteSectionTitle>
                 <VoteSectionDescription>
-                    항목을 입력하면 상세 페이제이 실시간 투표 선택지가 생성됩니다.
+                    항목을 입력하면 상세 페이지에 실시간 투표 선택지가 생성됩니다.
                 </VoteSectionDescription>
                 <VoteFieldsFlex>
                     <InputGroup

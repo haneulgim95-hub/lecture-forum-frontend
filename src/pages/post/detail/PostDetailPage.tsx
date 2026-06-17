@@ -1,4 +1,4 @@
-import { useLayoutEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import type { Post } from "../../../types/post.type.ts";
 import { useNavigate, useParams } from "react-router";
 import postApi from "../../../api/user/postApi.ts";
@@ -8,35 +8,51 @@ import {
     DetailInfo,
     DetailTitle,
     DetailWrapper,
+    LoadingText,
     PostContainer,
 } from "../../../components/post/post.style.tsx";
 import { useAuthStore } from "../../../stores/auth/authStore.ts";
 import { AdminButtonGroup } from "../../../components/admin/admin.style.tsx";
 import Button from "../../../components/common/button/Button.tsx";
+import PostVote from "../../../components/post/PostVote.tsx";
 
 function PostDetailPage() {
     const navigate = useNavigate();
     const { id } = useParams<{ id: string }>();
     const [post, setPost] = useState<Post | null>(null);
     const [isLoading, setIsLoading] = useState(true);
-    const { user } = useAuthStore();
-    useLayoutEffect(() => {
-        const loadPost = async () => {
-            try {
-                const data = await postApi.fetchPostById(Number(id));
-                setPost(data);
-            } catch (error) {
-                console.log(error);
-                alert("게시글을 불러오는 중 오류가 발생했습니다.");
-                navigate(-1);
-            } finally {
-                setIsLoading(false);
-            }
-        };
+    const { user, isLoggedIn } = useAuthStore();
+
+
+    const loadPost = useCallback(async () => {
+        try {
+            const data = await postApi.fetchPostById(Number(id));
+            setPost(data);
+        } catch (error) {
+            console.log(error);
+            alert("게시글을 불러오는 중 오류가 발생했습니다.");
+            navigate(-1);
+        } finally {
+            setIsLoading(false);
+        }
+    }, [id, navigate, setIsLoading]);
+
+    useEffect(() => {
+        // eslint-disable-next-line react-hooks/set-state-in-effect
         loadPost().then(() => {});
-    }, [id, navigate]);
+    }, [loadPost]);
+    
+    if (isLoading) {
+        return (
+            <PostContainer>
+                <LoadingText>데이터를 불러오는 중...</LoadingText>
+            </PostContainer>
+        );
+    }
 
     if (!post) return;
+
+    const hasVoteSystem = !!post.option1Text && !!post.option2Text;
 
     return (
         <PostContainer>
@@ -66,11 +82,15 @@ function PostDetailPage() {
 
                 <DetailContent>{post.content}</DetailContent>
 
-                <AdminButtonGroup>
+                {hasVoteSystem && post.vote && (
+                    <PostVote isLoggedIn={isLoggedIn} loadPost={loadPost} post={post}/>
+                )}
+
+                <AdminButtonGroup style={{ marginTop: "30px"}}>
                     <Button color={"secondary"} variant={"contained"} onClick={() => navigate(-1)}>
                         목록으로
                     </Button>
-                    {user?.id === post.user.id && (
+                    {user?.id === post.userId && (
                         <>
                             <Button color={"warning"} variant={"contained"}>
                                 수정
