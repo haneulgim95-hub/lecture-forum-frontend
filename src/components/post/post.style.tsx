@@ -295,6 +295,39 @@ export const RevoteButton = styled.button`
     }
 `;
 
+export const PopularPostListSection = styled.div`
+    width: 50%;
+    border: 1px solid ${props => props.theme.colors.divider};
+    border-radius: 8px;
+    background-color: ${props => props.theme.colors.background.paper};
+    padding: 12px;
+    margin-bottom: 30px;
+`;
+
+export const PopularPostListHeader = styled.h3`
+    font-size: 20px;
+    font-weight: 800;
+    margin-bottom: 24px;
+`;
+
+export const PopularPostListLiWrapper = styled.div`
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 15px;
+    
+    li {
+        font-weight: 700;
+        color: ${props => props.theme.colors.primary};
+        margin-left: 20px;
+        line-height: 1.6;
+    }
+    
+    span {
+        font-weight: 500;
+    }
+`;
+
 export const LoadingText = styled.div`
     text-align: center;
     padding: 100px 0;

@@ -15,6 +15,7 @@ import {
 import Button from "../../components/common/button/Button.tsx";
 import { useAuthStore } from "../../stores/auth/authStore.ts";
 import Pagination from "../../components/common/pagination/Pagination.tsx";
+import PopularPostList from "../../components/post/PopularPostList.tsx";
 
 function PostListPage() {
     // 주소를 통해 categoryId가 오는구나
@@ -63,6 +64,7 @@ function PostListPage() {
 
     return (
         <PostContainer>
+            <PopularPostList categoryId={Number(categoryId)}/>
             <PostPageHeader>
                 <PostTitle>
                     게시판 <small>총 {total}개의 글</small>

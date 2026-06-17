@@ -8,6 +8,11 @@ const fetchRecentPostList = async () => {
     return response.data.data;
 };
 
+const fetchPopularPostList = async (categoryId: number): Promise<Post[]> => {
+    const response = await axiosInstance.get(`/post/popularList/${categoryId}`);
+    return response.data.data;
+};
+
 const fetchPostListByCategory = async (categoryId: number, page: number, size: number): Promise<PaginationResponseType<Post>> => {
     const response = await axiosInstance.get(`/post/list/${categoryId}?page=${page}&size=${size}`);
     return response.data.data;
@@ -34,6 +39,7 @@ const cancelVotePost = async (postId: number) => {
 
 export default {
     fetchRecentPostList,
+    fetchPopularPostList,
     fetchPostListByCategory,
     createPost,
     fetchPostById,
